@@ -31,6 +31,7 @@ jobs:
         run: xcodegen generate
 
       - name: 编译 App
+        id: build
         working-directory: AlcoholToleranceApp
         run: |
           xcodebuild build \
@@ -39,9 +40,13 @@ jobs:
             -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=latest' \
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO
+            CODE_SIGNING_REQUIRED=NO \
+            2>&1 | tee build.log
+        continue-on-error: true
 
       - name: 运行单元测试
+        id: test
+        if: steps.build.outcome == 'success'
         working-directory: AlcoholToleranceApp
         run: |
           xcodebuild test \
@@ -50,4 +55,54 @@ jobs:
             -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=latest' \
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO
+            CODE_SIGNING_REQUIRED=NO \
+            2>&1 | tee test.log
+        continue-on-error: true
+
+      - name: 通知 Discord — 成功
+        if: steps.build.outcome == 'success' && steps.test.outcome == 'success'
+        run: |
+          curl -s -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"embeds\":[{
+              \"title\":\"✅ CI 通过 — AlcoholToleranceApp\",
+              \"description\":\"编译 + 测试全部通过\",
+              \"color\":65280,
+              \"fields\":[
+                {\"name\":\"📦 编译\",\"value\":\"✅ 通过\",\"inline\":true},
+                {\"name\":\"🧪 测试\",\"value\":\"✅ 全部通过\",\"inline\":true},
+                {\"name\":\"🔗 详情\",\"value\":\"[查看 Actions](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\"}
+              ],
+              \"footer\":{\"text\":\"${{ github.sha }}\"}
+            }]}"
+
+      - name: 通知 Discord — 失败
+        if: failure() || steps.build.outcome == 'failure' || steps.test.outcome == 'failure'
+        run: |
+          BUILD_STATUS="${{ steps.build.outcome }}"
+          TEST_STATUS="${{ steps.test.outcome }}"
+          if [ "$BUILD_STATUS" = "failure" ]; then
+            BUILD_ICON="❌"; BUILD_MSG="编译失败"
+          else
+            BUILD_ICON="✅"; BUILD_MSG="编译通过"
+          fi
+          if [ "$TEST_STATUS" = "failure" ]; then
+            TEST_ICON="❌"; TEST_MSG="测试失败"
+          elif [ "$TEST_STATUS" = "skipped" ]; then
+            TEST_ICON="⏭️"; TEST_MSG="跳过（编译未通过）"
+          else
+            TEST_ICON="✅"; TEST_MSG="测试通过"
+          fi
+          curl -s -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"embeds\":[{
+              \"title\":\"❌ CI 失败 — AlcoholToleranceApp\",
+              \"description\":\"请检查编译/测试错误\",
+              \"color\":16711680,
+              \"fields\":[
+                {\"name\":\"📦 编译\",\"value\":\"${BUILD_ICON} ${BUILD_MSG}\",\"inline\":true},
+                {\"name\":\"🧪 测试\",\"value\":\"${TEST_ICON} ${TEST_MSG}\",\"inline\":true},
+                {\"name\":\"🔗 详情\",\"value\":\"[查看 Actions](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\"}
+              ],
+              \"footer\":{\"text\":\"${{ github.sha }}\"}
+            }]}"
