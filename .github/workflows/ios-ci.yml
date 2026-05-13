@@ -40,8 +40,7 @@ jobs:
             -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=latest' \
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            2>&1 | tee build.log
+            CODE_SIGNING_REQUIRED=NO
         continue-on-error: true
 
       - name: 运行单元测试
@@ -55,54 +54,47 @@ jobs:
             -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=latest' \
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            2>&1 | tee test.log
+            CODE_SIGNING_REQUIRED=NO
         continue-on-error: true
 
-      - name: 通知 Discord — 成功
-        if: steps.build.outcome == 'success' && steps.test.outcome == 'success'
+      - name: 通知 Discord
+        if: always()
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
-          curl -s -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
-            -H "Content-Type: application/json" \
-            -d "{\"embeds\":[{
-              \"title\":\"✅ CI 通过 — AlcoholToleranceApp\",
-              \"description\":\"编译 + 测试全部通过\",
-              \"color\":65280,
-              \"fields\":[
-                {\"name\":\"📦 编译\",\"value\":\"✅ 通过\",\"inline\":true},
-                {\"name\":\"🧪 测试\",\"value\":\"✅ 全部通过\",\"inline\":true},
-                {\"name\":\"🔗 详情\",\"value\":\"[查看 Actions](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\"}
-              ],
-              \"footer\":{\"text\":\"${{ github.sha }}\"}
-            }]}"
+          BUILD_OUTCOME="${{ steps.build.outcome }}"
+          TEST_OUTCOME="${{ steps.test.outcome }}"
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
-      - name: 通知 Discord — 失败
-        if: failure() || steps.build.outcome == 'failure' || steps.test.outcome == 'failure'
-        run: |
-          BUILD_STATUS="${{ steps.build.outcome }}"
-          TEST_STATUS="${{ steps.test.outcome }}"
-          if [ "$BUILD_STATUS" = "failure" ]; then
-            BUILD_ICON="❌"; BUILD_MSG="编译失败"
+          if [ "$BUILD_OUTCOME" = "success" ] && [ "$TEST_OUTCOME" = "success" ]; then
+            TITLE="✅ CI 通过 — AlcoholToleranceApp"
+            COLOR=65280
+            BUILD_LINE="✅ 编译通过"
+            TEST_LINE="✅ 测试通过"
           else
-            BUILD_ICON="✅"; BUILD_MSG="编译通过"
+            TITLE="❌ CI 失败 — AlcoholToleranceApp"
+            COLOR=16711680
+            BUILD_LINE="$([ "$BUILD_OUTCOME" = "success" ] && echo '✅ 编译通过' || echo '❌ 编译失败')"
+            TEST_LINE="$([ "$TEST_OUTCOME" = "success" ] && echo '✅ 测试通过' || [ "$TEST_OUTCOME" = "skipped" ] && echo '⏭️ 跳过' || echo '❌ 测试失败')"
           fi
-          if [ "$TEST_STATUS" = "failure" ]; then
-            TEST_ICON="❌"; TEST_MSG="测试失败"
-          elif [ "$TEST_STATUS" = "skipped" ]; then
-            TEST_ICON="⏭️"; TEST_MSG="跳过（编译未通过）"
-          else
-            TEST_ICON="✅"; TEST_MSG="测试通过"
-          fi
-          curl -s -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
-            -H "Content-Type: application/json" \
-            -d "{\"embeds\":[{
-              \"title\":\"❌ CI 失败 — AlcoholToleranceApp\",
-              \"description\":\"请检查编译/测试错误\",
-              \"color\":16711680,
-              \"fields\":[
-                {\"name\":\"📦 编译\",\"value\":\"${BUILD_ICON} ${BUILD_MSG}\",\"inline\":true},
-                {\"name\":\"🧪 测试\",\"value\":\"${TEST_ICON} ${TEST_MSG}\",\"inline\":true},
-                {\"name\":\"🔗 详情\",\"value\":\"[查看 Actions](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\"}
+
+          PAYLOAD=$(cat <<EOF
+          {
+            "embeds": [{
+              "title": "$TITLE",
+              "color": $COLOR,
+              "fields": [
+                {"name": "📦 编译", "value": "$BUILD_LINE", "inline": true},
+                {"name": "🧪 测试", "value": "$TEST_LINE", "inline": true},
+                {"name": "🔗 详情", "value": "[查看 Actions]($RUN_URL)"}
               ],
-              \"footer\":{\"text\":\"${{ github.sha }}\"}
-            }]}"
+              "footer": {"text": "${{ github.sha }}"}
+            }]
+          }
+          EOF
+          )
+
+          echo "$PAYLOAD" > /tmp/discord.json
+          curl -s -X POST "$WEBHOOK" -H "Content-Type: application/json" -d @/tmp/discord.json
+          echo ""
+          echo "Discord 通知已发送"
