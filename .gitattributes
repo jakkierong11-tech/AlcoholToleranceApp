@@ -1,0 +1,8 @@
+# 强制 Swift 文件用 LF，防止 CRLF 破坏 UTF-8
+*.swift text eol=lf
+*.yml text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.sh text eol=lf
+*.js text eol=lf
+*.ts text eol=lf

@@ -1,7 +1,7 @@
 import SwiftUI
 
 // ============================================================
-// DashboardView �?主页霓虹仪表�?// 包含�?70° BAC 弧形仪表盘、状态卡片、快速操作入�?// ============================================================
+// [corrupted comment removed]
 
 struct DashboardView: View {
     @ObservedObject var vm: DashboardVM
@@ -23,7 +23,7 @@ struct DashboardView: View {
         .task { vm.refresh() }
     }
 
-    // MARK: - 顶部�?
+// [corrupted comment removed]
     private var headerSection: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
@@ -51,14 +51,14 @@ struct DashboardView: View {
         }
     }
 
-    // MARK: - 270° BAC 弧形仪表�?
+// [corrupted comment removed]
     private var bacGaugeSection: some View {
         VStack(spacing: 0) {
             ZStack {
-                // 背景�?                BACGaugeArc()
+// [corrupted comment removed]
                     .stroke(Color.white.opacity(0.08), lineWidth: 24)
 
-                // 渐变弧（从安全色到危险色�?                BACGaugeArc(progress: bacProgress)
+// [corrupted comment removed]
                     .stroke(
                         AngularGradient(
                             gradient: Gradient(colors: bacGradientColors),
@@ -75,7 +75,7 @@ struct DashboardView: View {
                     .stroke(Color.white.opacity(0.05), lineWidth: 2)
                     .scaleEffect(0.82)
 
-                // 中心显示�?                VStack(spacing: 4) {
+// [corrupted comment removed]
                     Text(vm.bacLevel.emoji)
                         .font(.system(size: 40))
                     Text(BACCalculator.formatBAC(vm.currentBAC, style: .mgPer100mL))
@@ -98,7 +98,7 @@ struct DashboardView: View {
         .padding(.horizontal, 4)
     }
 
-    /// BAC 进度值（0.0 ~ 1.0），�?0.40% 为满值（danger 下限�?    private var bacProgress: CGFloat {
+// [corrupted comment removed]
         min(CGFloat(vm.currentBAC) / 0.40, 1.0)
     }
 
@@ -160,8 +160,8 @@ struct DashboardView: View {
             )
             StatCard(
                 icon: "figure.walk",
-                value: vm.currentBAC < 0.02 ? "�? : "⚠️",
-                label: "驾驶状�?,
+                value: vm.currentBAC < 0.02 ? "/*?*/? : "/*?*/",
+                label: "/*?*/?,
                 color: vm.currentBAC < 0.02 ? NeonColors.safe : NeonColors.danger
             )
         }

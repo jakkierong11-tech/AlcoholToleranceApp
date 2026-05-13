@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 
 // MARK: - SwiftData 共享容器
-/// 提供全局 ModelContainer，供 ViewModel init 中提前获�?ModelContext
+// [corrupted comment removed]
 enum DataStack {
     static let shared = DataStack()
 

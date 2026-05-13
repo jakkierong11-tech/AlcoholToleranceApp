@@ -1,7 +1,7 @@
 import SwiftUI
 
 // ============================================================
-// SoberTestView �?酒量/清醒度测试界�?// 三种测试模式：反应速度、平衡测试、记忆力
+// [corrupted comment removed]
 // ============================================================
 
 // MARK: - 测试类型枚举
@@ -138,7 +138,7 @@ struct ReactionTestView: View {
 
     @State private var stimulusColor = NeonColors.cardBackground
     @State private var stimulusOpacity: Double = 0.3
-    @State private var resultText = "等待开�?.."
+    @State private var resultText = "/*?*/?.."
     @State private var isWaitingForStimulus = false
     @State private var tapStartTime: Date = Date()
     @State private var roundReactionTimes: [Double] = []
@@ -177,12 +177,12 @@ struct ReactionTestView: View {
                 .padding(.horizontal, 4)
             }
 
-            // 开始按�?            Button {
+// [corrupted comment removed]
                 startReactionTest()
             } label: {
                 HStack {
                     Image(systemName: "play.fill")
-                    Text(isWaitingForStimulus ? "测试进行�?.." : "开始反应测�?)
+                    Text(isWaitingForStimulus ? "/*?*/?.." : "/*?*/?)
                 }
                 .font(.headline)
                 .foregroundColor(.white)
@@ -226,7 +226,7 @@ struct ReactionTestView: View {
 
         if stimulusColor == NeonColors.cardBackground || stimulusOpacity < 0.8 {
             // 抢跑
-            resultText = "�?别急，等绿色！"
+            resultText = "/*?*/?/*?*/"
             return
         }
 
@@ -234,17 +234,17 @@ struct ReactionTestView: View {
         roundReactionTimes.append(reactionMs)
 
         if roundReactionTimes.count >= 5 {
-            // 完成全部 5 �?            let avgMs = roundReactionTimes.reduce(0, +) / Double(roundReactionTimes.count)
+// [corrupted comment removed]
             vm.submitReactionTime(avgMs)
             resultText = String(format: "🎯 平均反应: %.0fms", avgMs)
             stimulusColor = NeonColors.cardBackground
             stimulusOpacity = 0.3
             isWaitingForStimulus = false
         } else {
-            resultText = "�?�?\(roundReactionTimes.count)/5 轮完�?
+            resultText = "/*?*/?/*?*/?\(roundReactionTimes.count)/5 /*?*/?
             stimulusColor = NeonColors.cardBackground
             stimulusOpacity = 0.3
-            // 自动开始下一�?            let delay = Double.random(in: 1.0...3.0)
+// [corrupted comment removed]
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                 if self.isWaitingForStimulus {
                     self.showStimulus()
@@ -289,7 +289,7 @@ struct BalanceTestView: View {
             // 稳定性指示条
             if isTesting {
                 VStack(spacing: 4) {
-                    Text("平衡稳定�?)
+                    Text("/*?*/?)
                         .font(.caption)
                         .foregroundColor(NeonColors.textSecondary)
                     GeometryReader { geo in
@@ -317,7 +317,7 @@ struct BalanceTestView: View {
             } label: {
                 HStack {
                     Image(systemName: isTesting ? "stop.fill" : "play.fill")
-                    Text(isTesting ? "结束测试" : "开�?15 秒平衡测�?)
+                    Text(isTesting ? "/*?*/" : "/*?*/?15 /*?*/?)
                 }
                 .font(.headline)
                 .foregroundColor(.white)
@@ -329,7 +329,7 @@ struct BalanceTestView: View {
                 )
             }
 
-            Text("将设备平放在手掌上，保持 15 秒不�?)
+            Text("/*?*/ 15 /*?*/?)
                 .font(.caption)
                 .foregroundColor(NeonColors.textSecondary)
         }
@@ -356,7 +356,7 @@ struct BalanceTestView: View {
         timerSeconds = 15
         tiltValues = []
 
-        // 模拟倾斜数据（实�?App 使用陀螺仪�?        Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { timer in
+// [corrupted comment removed]
             guard self.isTesting else {
                 timer.invalidate()
                 return
@@ -380,7 +380,7 @@ struct BalanceTestView: View {
     }
 }
 
-// MARK: - 记忆力测�?
+// [corrupted comment removed]
 struct MemoryTestView: View {
     @ObservedObject var vm: SoberTestVM
 
@@ -392,30 +392,30 @@ struct MemoryTestView: View {
     @State private var isPlaying = false
     @State private var showWrong = false
 
-    private let symbols = ["�?, "❤️", "💎", "🔥", "🌙", "☀�?]
+    private let symbols = ["/*?*/?, "/*?*/", "/*?*/", "/*?*/", "/*?*/", "/*?*/?]
 
     var body: some View {
         VStack(spacing: 16) {
-            // 序列展示�?            VStack(spacing: 8) {
+// [corrupted comment removed]
                 if isShowing {
-                    Text("记住这些符号�?)
+                    Text("/*?*/?)
                         .font(.headline)
                         .foregroundColor(NeonColors.accent)
                 } else if isPlaying {
-                    Text("按顺序点�?)
+                    Text("/*?*/?)
                         .font(.headline)
                         .foregroundColor(NeonColors.textSecondary)
-                    Text("已�?\(userSequence.count)/\(sequence.count)")
+                    Text("/*?*/?\(userSequence.count)/\(sequence.count)")
                         .font(.caption)
                         .foregroundColor(NeonColors.textSecondary)
                 } else {
-                    Text("开始记忆测�?)
+                    Text("/*?*/?)
                         .font(.headline)
                         .foregroundColor(NeonColors.textSecondary)
                 }
             }
 
-            // 显示的序�?            if isShowing {
+// [corrupted comment removed]
                 HStack(spacing: 8) {
                     ForEach(Array(sequence.enumerated()), id: \.offset) { _, symbol in
                         Text(symbol)
@@ -427,11 +427,11 @@ struct MemoryTestView: View {
             }
 
             if showWrong {
-                Text("�?顺序错误�?)
+                Text("/*?*/?/*?*/?)
                     .font(.headline)
                     .foregroundColor(NeonColors.danger)
             } else if isPlaying && !isShowing {
-                Text("�?\(currentRound) �?| 正确 \(correctRounds)/\(currentRound - 1)")
+                Text("/*?*/?\(currentRound) /*?*/?| /*?*/ \(correctRounds)/\(currentRound - 1)")
                     .font(.caption)
                     .foregroundColor(NeonColors.textSecondary)
             }
@@ -466,7 +466,7 @@ struct MemoryTestView: View {
             } label: {
                 HStack {
                     Image(systemName: isPlaying ? "arrow.counterclockwise" : "play.fill")
-                    Text(isPlaying ? "重新开�? : "开始记忆测�?)
+                    Text(isPlaying ? "/*?*/? : "/*?*/?)
                 }
                 .font(.headline)
                 .foregroundColor(.white)
@@ -492,7 +492,7 @@ struct MemoryTestView: View {
     }
 
     private func generateSequence() {
-        let length = currentRound + 2 // �?�?个，�?�?�?..
+        let length = currentRound + 2 // /*?*/?/*?*/?/*?*/?/*?*/?/*?*/?..
         sequence = (0..<length).map { _ in symbols.randomElement()! }
         userSequence = []
         showWrong = false
@@ -508,7 +508,7 @@ struct MemoryTestView: View {
         guard isPlaying && !isShowing && userSequence.count < sequence.count else { return }
         userSequence.append(symbol)
 
-        // 实时检�?        let index = userSequence.count - 1
+// [corrupted comment removed]
         if userSequence[index] != sequence[index] {
             showWrong = true
             // 结束测试
@@ -523,7 +523,7 @@ struct MemoryTestView: View {
             // 本轮正确
             correctRounds += 1
             currentRound += 1
-            // 继续下一�?            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+// [corrupted comment removed]
                 self.generateSequence()
             }
         }

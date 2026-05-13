@@ -1,8 +1,8 @@
 import SwiftUI
 
 // ============================================================
-// SettingsView �?设置界面
-// 地区法律标准、代谢参数、主题切换、关于信�?// ============================================================
+// [corrupted comment removed]
+// [corrupted comment removed]
 
 struct SettingsView: View {
     @ObservedObject var vm: SettingsVM
@@ -66,7 +66,7 @@ struct SettingsView: View {
             .background(NeonColors.cardBackground)
             .cornerRadius(14)
 
-            // 法律阈值详�?            VStack(spacing: 6) {
+// [corrupted comment removed]
                 legalLimitRow(
                     label: "酒后驾驶 (DUI)",
                     limit: vm.region.duiLimit,
@@ -102,7 +102,7 @@ struct SettingsView: View {
                 .font(.subheadline)
                 .foregroundColor(NeonColors.textSecondary)
             Spacer()
-            Text("�?\(String(format: "%.2f", limit * 100)) mg/100ml")
+            Text("/*?*/?\(String(format: "%.2f", limit * 100)) mg/100ml")
                 .font(.subheadline.bold())
                 .foregroundColor(color)
         }
@@ -115,7 +115,7 @@ struct SettingsView: View {
             sectionHeader(icon: "bolt.fill", title: "代谢参数")
 
             VStack(spacing: 16) {
-                // 代谢�?                VStack(alignment: .leading, spacing: 6) {
+// [corrupted comment removed]
                     HStack {
                         Text("代谢速率")
                             .font(.subheadline)
@@ -135,11 +135,11 @@ struct SettingsView: View {
                     }
 
                     HStack {
-                        Text("�?(0.005)")
+                        Text("/*?*/?(0.005)")
                             .font(.caption2)
                             .foregroundColor(NeonColors.textSecondary)
                         Spacer()
-                        Text("�?(0.030)")
+                        Text("/*?*/?(0.030)")
                             .font(.caption2)
                             .foregroundColor(NeonColors.textSecondary)
                     }
@@ -147,11 +147,11 @@ struct SettingsView: View {
 
                 Divider().background(Color.white.opacity(0.05))
 
-                // 参考信�?                VStack(alignment: .leading, spacing: 4) {
-                    Label("平均代谢�? 0.015%/h", systemImage: "info.circle")
+// [corrupted comment removed]
+                    Label("/*?*/? 0.015%/h", systemImage: "info.circle")
                         .font(.caption)
                         .foregroundColor(NeonColors.textSecondary)
-                    Label("代谢速率受体重、性别、年龄、遗传因素影�?,
+                    Label("/*?*/?,
                           systemImage: "person.fill.questionmark")
                         .font(.caption2)
                         .foregroundColor(NeonColors.textSecondary.opacity(0.7))
@@ -170,7 +170,7 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: 12) {
             sectionHeader(icon: "paintbrush.fill", title: "主题")
 
-            // 当前仅霓虹主�?            HStack(spacing: 12) {
+// [corrupted comment removed]
                 VStack(spacing: 8) {
                     RoundedRectangle(cornerRadius: 10)
                         .fill(NeonColors.background)
@@ -220,7 +220,7 @@ struct SettingsView: View {
                 Divider().background(Color.white.opacity(0.05))
                 aboutRow(label: "计算引擎", value: "Widmark 公式")
                 Divider().background(Color.white.opacity(0.05))
-                aboutRow(label: "法律数据�?, value: "各地区交通法�?)
+                aboutRow(label: "/*?*/?, value: "/*?*/?)
             }
             .padding()
             .background(NeonColors.cardBackground)

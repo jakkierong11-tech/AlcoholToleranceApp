@@ -1,17 +1,17 @@
 import SwiftUI
 
 // ============================================================
-// BACGauge �?赛博朋克风格 BAC 环形仪表�?// 270° 弧，从底左到底右，顶部留�?// 呼吸光晕�?BAC >= 0.02 时触�?// ============================================================
+// [corrupted comment removed]
 
 struct BACGauge: View {
     let bacPercent: Double
     var size: CGFloat = 200
 
-    // MARK: - 动画状�?
+// [corrupted comment removed]
     @State private var animationProgress: Double = 0
     @State private var glowOpacity: Double = 0.3
 
-    // MARK: - 计算属�?
+// [corrupted comment removed]
     private var bacLevel: BACLevel {
         switch bacPercent {
         case ..<0.020:  return .sober
@@ -75,7 +75,7 @@ struct BACGauge: View {
                 .rotationEffect(.degrees(arcRotation))
                 .frame(width: size, height: size)
 
-            // 前景进度�?            Circle()
+// [corrupted comment removed]
                 .trim(from: 0, to: trimEnd)
                 .stroke(
                     AngularGradient(

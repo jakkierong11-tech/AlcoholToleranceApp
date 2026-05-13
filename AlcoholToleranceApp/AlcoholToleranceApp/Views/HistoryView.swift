@@ -1,7 +1,7 @@
 import SwiftUI
 
 // ============================================================
-// HistoryView �?历史记录界面
+// [corrupted comment removed]
 // 展示过往饮酒会话列表，支持筛选、删除、详情展开
 // ============================================================
 
@@ -73,7 +73,7 @@ struct HistoryView: View {
                             }
                         }
                         .onTapGesture {
-                            // 点击查看详情 �?由上�?NavigationStack 处理
+// [corrupted comment removed]
                         }
                 }
             }
@@ -90,11 +90,11 @@ struct HistoryView: View {
                 .font(.system(size: 60))
                 .foregroundColor(NeonColors.textSecondary.opacity(0.4))
 
-            Text("还没有饮酒记�?)
+            Text("/*?*/?)
                 .font(.title3.bold())
                 .foregroundColor(NeonColors.textPrimary)
 
-            Text("开始记录第一杯酒�?)
+            Text("/*?*/?)
                 .font(.subheadline)
                 .foregroundColor(NeonColors.textSecondary)
             Spacer()
@@ -103,7 +103,7 @@ struct HistoryView: View {
     }
 }
 
-// MARK: - 会话�?
+// [corrupted comment removed]
 struct SessionRow: View {
     let session: DrinkSession
 
@@ -114,7 +114,7 @@ struct SessionRow: View {
                 Text(bacEmoji)
                     .font(.system(size: 36))
 
-                // 中间：信�?                VStack(alignment: .leading, spacing: 4) {
+// [corrupted comment removed]
                     // 日期
                     Text(session.startTime, style: .date)
                         .font(.subheadline.bold())
@@ -126,17 +126,17 @@ struct SessionRow: View {
                             .foregroundColor(NeonColors.textSecondary)
 
                         if let result = session.bacResult {
-                            Text("�?)
+                            Text("/*?*/?)
                                 .foregroundColor(NeonColors.textSecondary)
 
                             Text(BACCalculator.formatBAC(result.bacPercent))
                                 .font(.caption)
                                 .foregroundColor(bacColor)
 
-                            Text("�?)
+                            Text("/*?*/?)
                                 .foregroundColor(NeonColors.textSecondary)
 
-                            Text("\(String(format: "%.0f", result.toleranceScore))�?)
+                            Text("\(String(format: "%.0f", result.toleranceScore))/*?*/?)
                                 .font(.caption)
                                 .foregroundColor(scoreColor)
                         }
@@ -145,7 +145,7 @@ struct SessionRow: View {
 
                 Spacer()
 
-                // 右边：状态箭�?                Image(systemName: "chevron.right")
+// [corrupted comment removed]
                     .font(.caption)
                     .foregroundColor(NeonColors.textSecondary.opacity(0.5))
             }

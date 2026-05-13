@@ -1,8 +1,8 @@
 import SwiftUI
 
 // ============================================================
-// DrinkLoggerView �?饮酒记录界面
-// 选择酒类 �?调整容量/度数 �?提交记录 �?实时反馈
+// [corrupted comment removed]
+// [corrupted comment removed]
 // ============================================================
 
 struct DrinkLoggerView: View {
@@ -27,7 +27,7 @@ struct DrinkLoggerView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    // MARK: - 会话状�?
+// [corrupted comment removed]
     private var sessionHeader: some View {
         HStack {
             switch vm.state {
@@ -44,7 +44,7 @@ struct DrinkLoggerView: View {
                 HStack(spacing: 8) {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundColor(NeonColors.safe)
-                    Text("已记�?\(record.drinkType.rawValue)")
+                    Text("/*?*/?\(record.drinkType.rawValue)")
                         .font(.subheadline)
                         .foregroundColor(NeonColors.safe)
                 }
@@ -105,10 +105,10 @@ struct DrinkLoggerView: View {
         }
     }
 
-    // MARK: - 饮用�?
+// [corrupted comment removed]
     private var volumeSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("饮用�?)
+            Text("/*?*/?)
                 .font(.callout.bold())
                 .foregroundColor(NeonColors.textSecondary)
 
@@ -156,7 +156,7 @@ struct DrinkLoggerView: View {
                     .foregroundColor(NeonColors.textSecondary)
                 Spacer()
 
-                // 纯酒精量参�?                Text("�?\(String(format: "%.0f", vm.volumeMl * (vm.abv / 100) * 0.789))g 纯酒�?)
+// [corrupted comment removed]
                     .font(.caption2)
                     .foregroundColor(NeonColors.textSecondary)
             }
@@ -175,7 +175,7 @@ struct DrinkLoggerView: View {
             }
 
             if vm.abv != vm.selectedType.defaultAbv {
-                Text("⚠️ 自定义度�?(\(vm.selectedType.rawValue) 默认�?\(String(format: "%.1f", vm.selectedType.defaultAbv))%)")
+                Text("/*?*/ /*?*/?(\(vm.selectedType.rawValue) /*?*/?\(String(format: "%.1f", vm.selectedType.defaultAbv))%)")
                     .font(.caption2)
                     .foregroundColor(NeonColors.accent)
             }
@@ -184,14 +184,14 @@ struct DrinkLoggerView: View {
         .neonCard()
     }
 
-    // MARK: - 选项开�?
+// [corrupted comment removed]
     private var optionToggles: some View {
         VStack(spacing: 12) {
             Toggle(isOn: $vm.isCarbonated) {
                 HStack(spacing: 8) {
                     Image(systemName: "bubbles.and.sparkles.fill")
                         .foregroundColor(vm.isCarbonated ? NeonColors.accent : .gray)
-                    Text("含气泡饮品（吸收加快 ×1.2�?)
+                    Text("/*?*/ /*?*/1.2/*?*/?)
                         .font(.subheadline)
                         .foregroundColor(NeonColors.textPrimary)
                 }
@@ -205,7 +205,7 @@ struct DrinkLoggerView: View {
                 HStack(spacing: 8) {
                     Image(systemName: "fork.knife")
                         .foregroundColor(vm.isEmptyStomach ? NeonColors.accent : .gray)
-                    Text("空腹饮用（吸收加�?×1.3�?)
+                    Text("/*?*/?/*?*/1.3/*?*/?)
                         .font(.subheadline)
                         .foregroundColor(NeonColors.textPrimary)
                 }
@@ -225,7 +225,7 @@ struct DrinkLoggerView: View {
             } label: {
                 HStack {
                     Image(systemName: "wineglass.fill")
-                    Text("记录这杯�?)
+                    Text("/*?*/?)
                 }
                 .font(.headline)
                 .foregroundColor(.white)
@@ -244,7 +244,7 @@ struct DrinkLoggerView: View {
                 } label: {
                     HStack {
                         Image(systemName: "arrow.uturn.backward")
-                        Text("撤销上一�?)
+                        Text("/*?*/?)
                     }
                     .font(.subheadline)
                     .foregroundColor(NeonColors.danger)
@@ -280,7 +280,7 @@ struct DrinkLoggerView: View {
                     .font(.subheadline.bold())
                     .foregroundColor(NeonColors.textPrimary)
 
-                Text("纯酒�? \(String(format: "%.1f", vm.volumeMl * (vm.abv / 100) * 0.789))g")
+                Text("/*?*/? \(String(format: "%.1f", vm.volumeMl * (vm.abv / 100) * 0.789))g")
                     .font(.caption2)
                     .foregroundColor(NeonColors.textSecondary)
             }

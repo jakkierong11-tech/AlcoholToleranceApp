@@ -1,8 +1,8 @@
 import SwiftUI
 
 // ============================================================
-// ProfileView �?个人资料界面
-// 用户信息、酒量称号、统计数据、资料编�?// ============================================================
+// [corrupted comment removed]
+// [corrupted comment removed]
 
 struct ProfileView: View {
     @ObservedObject var vm: ProfileVM
@@ -29,11 +29,11 @@ struct ProfileView: View {
         .sheet(isPresented: $showEditSheet) {
             ProfileEditView(vm: vm)
         }
-        .alert("重置所有数�?, isPresented: $showResetAlert) {
+        .alert("/*?*/?, isPresented: $showResetAlert) {
             Button("取消", role: .cancel) {}
             Button("确认重置", role: .destructive) { vm.resetAllData() }
         } message: {
-            Text("此操作将清除所有用户数据、饮酒记录和测试结果，且无法恢复�?)
+            Text("/*?*/?)
         }
     }
 
@@ -64,10 +64,10 @@ struct ProfileView: View {
             // 性别年龄
             HStack(spacing: 16) {
                 Label(
-                    vm.user.isMale ? "�? : "�?,
+                    vm.user.isMale ? "/*?*/? : "/*?*/?,
                     systemImage: vm.user.isMale ? "figure.stand" : "figure.stand.dress"
                 )
-                Label("\(vm.user.estimatedAge)�?, systemImage: "calendar")
+                Label("\(vm.user.estimatedAge)/*?*/?, systemImage: "calendar")
                 Label(String(format: "%.0f kg", vm.user.weightKg), systemImage: "scalemass")
             }
             .font(.caption)
@@ -99,7 +99,7 @@ struct ProfileView: View {
             StatCard(
                 icon: "clock.fill",
                 value: "\(vm.totalSessions)",
-                label: "总会�?,
+                label: "/*?*/?,
                 color: NeonColors.accent
             )
             StatCard(
@@ -137,7 +137,7 @@ struct ProfileView: View {
                     .font(.caption)
                     .foregroundColor(NeonColors.textSecondary)
 
-                // 进度�?                GeometryReader { geo in
+// [corrupted comment removed]
                     ZStack(alignment: .leading) {
                         RoundedRectangle(cornerRadius: 4)
                             .fill(Color.white.opacity(0.1))
@@ -151,7 +151,7 @@ struct ProfileView: View {
                 .frame(height: 8)
                 .padding(.top, 4)
 
-                Text("下一�? \(String(format: "%.0f", nextTitleThreshold - vm.highestScore)) �?)
+                Text("/*?*/? \(String(format: "%.0f", nextTitleThreshold - vm.highestScore)) /*?*/?)
                     .font(.caption2)
                     .foregroundColor(NeonColors.textSecondary)
             }
@@ -230,7 +230,7 @@ struct ProfileView: View {
         } label: {
             HStack {
                 Image(systemName: "trash")
-                Text("重置所有数�?)
+                Text("/*?*/?)
             }
             .font(.subheadline)
             .foregroundColor(NeonColors.danger)
@@ -272,8 +272,8 @@ struct ProfileEditView: View {
                     }
 
                     Picker("性别", selection: $isMale) {
-                        Text("�?).tag(true)
-                        Text("�?).tag(false)
+                        Text("/*?*/?).tag(true)
+                        Text("/*?*/?).tag(false)
                     }
                     .onAppear { isMale = vm.user.isMale }
                 }
