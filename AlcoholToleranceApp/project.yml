@@ -1,0 +1,40 @@
+name: AlcoholToleranceApp
+options:
+  deploymentTarget:
+    iOS: "17.0"
+  xcodeVersion: "16.0"
+  generateEmptyDirectories: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: ""
+
+targets:
+  AlcoholToleranceApp:
+    type: application
+    platform: iOS
+    sources:
+      - path: AlcoholToleranceApp
+        excludes:
+          - "**/.DS_Store"
+    settings:
+      base:
+        INFOPLIST_FILE: AlcoholToleranceApp/Resources/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.alcoholtolerance.app
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG
+    dependencies: []
+
+  AlcoholToleranceAppTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests/AlcoholToleranceAppTests
+    dependencies:
+      - target: AlcoholToleranceApp
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.alcoholtolerance.app.tests

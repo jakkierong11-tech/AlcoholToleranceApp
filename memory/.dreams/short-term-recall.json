@@ -1,0 +1,227 @@
+{
+  "version": 1,
+  "updatedAt": "2026-05-13T14:04:08.863Z",
+  "entries": {
+    "memory:memory/2026-03-22.md:33:57": {
+      "key": "memory:memory/2026-03-22.md:33:57",
+      "path": "memory/2026-03-22.md",
+      "startLine": 33,
+      "endLine": 57,
+      "source": "memory",
+      "snippet": "- ✅ Doubao-Seedance-1.5-pro（视频生成） - 状态：✅ 可使用，图片保存到 `C:\\OPENCLAW_FILE\\` ## 🔍 Tavily Search API - 2026-03-22 18:43：配置 Tavily Search API - API Key: `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` - 用途：AI 优化的搜索引擎，用于实时信息查询（优先使用） - 额度：1000 次免费调用 - 状态：✅ 优先使用 ## 🔍 Kimi Search API - 2026-03-22 18:43：初始配置（旧 key 失效） - 2026-03-22 18:54：更新新 Key - API Key: `sk-Psyg98ePBjwjqUPyCnoy6Ki6E7WtW1kVjTlc1ntxotlCB55T` - 用途：国内网页搜索（当 Tavily 额度用完后启用） - 状态：✅ 已更新 ## 📋 搜索工具优先级规则 1. **Tavily Search** (优先，1000 次免费，国际/国内通用) 2. **Kimi Search** (Tavily 用完后启用，专注国内网页) - 每次搜索需注明使用的工具：🔍 [Search Tool: Tavily/Kimi] --- _最后更新：2026-03-22 17:24_",
+      "recallCount": 3,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 1.9003489389419346,
+      "maxScore": 0.6334501184765156,
+      "firstRecalledAt": "2026-05-10T13:04:07.345Z",
+      "lastRecalledAt": "2026-05-12T12:42:02.273Z",
+      "queryHashes": [
+        "2f056bc891cd",
+        "2f7166915b3d",
+        "9a6678b541f9"
+      ],
+      "recallDays": [
+        "2026-05-10",
+        "2026-05-11",
+        "2026-05-12"
+      ],
+      "conceptTags": [
+        "doubao-seedance-1.5-pro",
+        "openclaw-file",
+        "国际/国内通用",
+        "tavily/kimi",
+        "doubao",
+        "seedance",
+        "1.5",
+        "pro"
+      ]
+    },
+    "memory:memory/2026-03-22.md:1:39": {
+      "key": "memory:memory/2026-03-22.md:1:39",
+      "path": "memory/2026-03-22.md",
+      "startLine": 1,
+      "endLine": 39,
+      "source": "memory",
+      "snippet": "# MEMORY.md ## 👤 关于主人（老板） - **称呼：** 老大 / boss / 主人 - **风格偏好：** 干练直接，带点小幽默 - **时区：** Asia/Shanghai - **当前项目：** 配置 OpenClaw + OpenViking 记忆系统 ## 🔧 技术配置 - **模型：** Qwen3.5-Plus (openrouter/qwen/qwen3.5-plus-02-15) - **OpenViking 配置：** - 使用 NVIDIA API - API Base: https://integrate.api.nvidia.com/v1 - Embedding: nvidia/nv-embed-v1 - VLM: meta/llama-3.3-70b-instruct - 数据存储：`C:\\Users\\jakkie\\.openclaw\\workspace\\openviking_data` ## 🎯 重要决定 - 2026-03-22：决定不用火山引擎，改用 NVIDIA API - 2026-03-22：决定 OpenViking 只记录对话记忆，不索引书籍 ## 📌 对话习惯 - 老板喜欢简洁、直接的交流 - 可以用 emoji（🔧 😎 🚀）增加趣味性 - 重要配置决定后会说\"搞定\"确认 ## 🎨 Doubao AI Skill 安装 - 2026-03-22 17:00：安装 Doubao AI Skill（文生图/视频） - 位置：`skills/doubao-skill-v2/`",
+      "recallCount": 4,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 2.5270854427095975,
+      "maxScore": 0.6317717778387961,
+      "firstRecalledAt": "2026-05-10T13:04:07.345Z",
+      "lastRecalledAt": "2026-05-12T14:00:38.642Z",
+      "queryHashes": [
+        "2f056bc891cd",
+        "2f7166915b3d",
+        "9a6678b541f9",
+        "73e271130648"
+      ],
+      "recallDays": [
+        "2026-05-10",
+        "2026-05-11",
+        "2026-05-12"
+      ],
+      "conceptTags": [
+        "embedding",
+        "router",
+        "memory.md",
+        "asia/shanghai",
+        "qwen3.5-plus",
+        "integrate.api.nvidia.com/v1",
+        "nvidia/nv-embed-v1",
+        "meta/llama-3.3-70b-instruct"
+      ]
+    },
+    "memory:memory/2026-05-10.md:1:32": {
+      "key": "memory:memory/2026-05-10.md:1:32",
+      "path": "memory/2026-05-10.md",
+      "startLine": 1,
+      "endLine": 32,
+      "source": "memory",
+      "snippet": "# 2026-05-10 - 软件开发团队多 Agent 配置 ## 🎯 核心成果：4 子 Agent Discord Bot 团队 ### Agent 架构 | Agent | Discord Bot | 模型 | API Key | Thinking | |-------|------------|------|---------|----------| | 🔧 main | @jakkierong11_openclawbot | DeepSeek V4 PRO | sk-652...631e | ✅ 开 | | 🎨 designer | @首席架构设计师 | DeepSeek V4 PRO | 共享 main 的 | ❌ 关 | | 💻 developer | @开发工程师 | DeepSeek V4 PRO | sk-1d0...be7c (独立) | ❌ 关 | | 🧪 tester | @测试工程师 | KIMI K2.5 | sk-Clk...FTa4 | ❌ 关 | | 🔍 reviewer | @代码审查工程师 | QWEN 3.6 | sk-d58...3a67 | ❌ 关 | ### 技术细节 - **方案：** 多 Discord Bot（每个 agent 绑独立 Bot 账号），非频道路由 - **模型 Provider：** - `deepseek` (main + designer) → baseUrl: https://api.deepseek.com - `deepseek-dev` (developer) → bas",
+      "recallCount": 8,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 7.049855640410649,
+      "maxScore": 1,
+      "firstRecalledAt": "2026-05-10T13:06:23.973Z",
+      "lastRecalledAt": "2026-05-12T15:00:23.801Z",
+      "queryHashes": [
+        "124f2c52e930",
+        "24291136ce06",
+        "2f7166915b3d",
+        "9a6678b541f9",
+        "73e271130648",
+        "9f2ded6bad38",
+        "dc3c761b610e",
+        "e7520d2b67a9"
+      ],
+      "recallDays": [
+        "2026-05-10",
+        "2026-05-11",
+        "2026-05-12"
+      ],
+      "conceptTags": [
+        "jakkierong11-openclawbot",
+        "sk-652",
+        "sk-1d0",
+        "k2.5",
+        "sk-clk",
+        "3.6",
+        "sk-d58",
+        "api.deepseek.com"
+      ]
+    },
+    "memory:memory/2026-05-10.md:22:48": {
+      "key": "memory:memory/2026-05-10.md:22:48",
+      "path": "memory/2026-05-10.md",
+      "startLine": 22,
+      "endLine": 48,
+      "source": "memory",
+      "snippet": "- **Web Search：** 暂时未配 ### Discord 配对码（已全部批准） - main: WPJHDZ6V - designer: 4EGAZ2N2 - developer: 87MK58AD - reviewer: VF6NAJ26 - tester: 5YQEHZD5 ### 关键教训 1. **`openclaw gateway restart` 会中断当前回复** → 以后用 cron 延迟 10 秒重启避免断话 2. **`models.providers` 不可通过 patch 批量替换已有模型** → 安全机制拒删，用 Node 直写 JSON 3. **主 Bot account 配置时注意不覆盖** → 配子 agent 时覆盖了 main token，需单独补回 4. **KIMI 2.6 不稳定** → 用户要求换成 KIMI 2.5 5. **moonshot API Key 在清理模型时被误删** → 已恢复 ### 网络 - Clash Verge TUN 模式，端口 7897 - Node.js 不读 HTTP_PROXY，TUN 在系统层拦截流量 - proxy 配置在 `gateway.cmd` 中 ### 文件位置 - 配置：`C:\\Users\\jakkie\\.openclaw\\openclaw.json` - Agent config：`C:\\Users\\jakkie\\.openclaw\\agents\\{name}\\config.json` - 模型：`C:\\Users\\jakkie\\.openclaw\\openc",
+      "recallCount": 8,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 5.475026848285911,
+      "maxScore": 0.8403672215736431,
+      "firstRecalledAt": "2026-05-10T13:06:23.973Z",
+      "lastRecalledAt": "2026-05-12T15:00:23.801Z",
+      "queryHashes": [
+        "124f2c52e930",
+        "24291136ce06",
+        "2f7166915b3d",
+        "9a6678b541f9",
+        "73e271130648",
+        "9f2ded6bad38",
+        "dc3c761b610e",
+        "e7520d2b67a9"
+      ],
+      "recallDays": [
+        "2026-05-10",
+        "2026-05-11",
+        "2026-05-12"
+      ],
+      "conceptTags": [
+        "gateway",
+        "网络",
+        "models.providers",
+        "2.6",
+        "2.5",
+        "node.js",
+        "http-proxy",
+        "gateway.cmd"
+      ]
+    },
+    "memory:memory/2026-05-11.md:1:27": {
+      "key": "memory:memory/2026-05-11.md:1:27",
+      "path": "memory/2026-05-11.md",
+      "startLine": 1,
+      "endLine": 27,
+      "source": "memory",
+      "snippet": "# 2026-05-11 周一 ## 项目：酒量测试 App (AlcoholToleranceApp) ### 当天成果 - 团队 4 agent 全线上协作（designer/developer/tester/reviewer） - BACCalculator 12 个 static 方法全部完成（含 calculateBACAfterTime 补实现） - tester 交付 5 个测试类 50+ 用例 - reviewer 19 文件全量复审完成 - 开发小严交付 BACGauge 组件（270° 霓虹弧） - 设计师落地 BUGS.md + VIEWMODEL_CONTRACT.md ### Bug 状态 - P0: BUG-001 fetchOrCreateUser() 已修（总管补实现） - P0: BUG-002 updateUser()→updateProfile() 小严已修 - P1: BUG-003 颜色映射 4→8 色（色值表已出，待开发） - P1: BUG-005 法律阈值 EU/US 缺失 - P2: BUG-004 @StateObject→@Observable 待迁移 ### 整体进度 - 设计师评估 ~55%，预计 3-4 天到 90% - 瓶颈：ViewModels + Views 补齐 ### 教训 - tester 在同一个问题循环里卡了 6-7 次，需要改进信息消化 - workspace 路径不同步导致多个 agent 读不同版本文件",
+      "recallCount": 5,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 4.328225684279539,
+      "maxScore": 1,
+      "firstRecalledAt": "2026-05-12T14:00:38.642Z",
+      "lastRecalledAt": "2026-05-13T14:04:08.863Z",
+      "queryHashes": [
+        "73e271130648",
+        "efada40c57f1",
+        "dc3c761b610e",
+        "e7520d2b67a9",
+        "7b29afb2ccff"
+      ],
+      "recallDays": [
+        "2026-05-12",
+        "2026-05-13"
+      ],
+      "conceptTags": [
+        "bugs.md",
+        "viewmodel-contract.md",
+        "bug-001",
+        "bug-002",
+        "bug-003",
+        "bug-005",
+        "eu/us",
+        "bug-004"
+      ]
+    },
+    "memory:memory/2026-05-12.md:1:32": {
+      "key": "memory:memory/2026-05-12.md:1:32",
+      "path": "memory/2026-05-12.md",
+      "startLine": 1,
+      "endLine": 32,
+      "source": "memory",
+      "snippet": "# 2026-05-12 周二 ## 酒量测试 App — 继续推进 ### 总管 (@main) 完成 - ✅ BUG-005：BACCalculator 新增 LegalRegion 枚举（.cn/.us/.eu），drivingAdvice() 和 isOverLegalLimit() 支持按地区判断 - ✅ BUG-003：确认已修复 — BACLevel 原有 8 色 colorHex，新建 AppTheme.swift 提供 BACLevel.color 映射 + NeonColors 主题系统 - ✅ AppTheme.swift 创建（霓虹主题色 + neonCard modifier） - ✅ BUGS.md 更新（BUG-003、BUG-005 标记已修复） - ✅ 目录清理：移除 robocopy 产生的根层级重复目录 ### 💻 developer 交付 - ✅ ViewModels/ 6 文件齐全：DashboardVM, DrinkLoggerVM, SoberTestVM, HistoryVM, ProfileVM, TestSessionVM - ✅ 顺手修了 3 个缺失属性：DrinkType.typicalVolumeMl, DrinkType.emoji, BACLevel.levelNumber ### 🎨 designer 交付 - ✅ Views/ 6 文件齐全：DashboardView(含 BACGauge), DrinkLoggerView, SoberTestView, HistoryView, ProfileVi",
+      "recallCount": 3,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 3,
+      "maxScore": 1,
+      "firstRecalledAt": "2026-05-12T14:30:54.220Z",
+      "lastRecalledAt": "2026-05-13T14:04:08.863Z",
+      "queryHashes": [
+        "efada40c57f1",
+        "aebc4179fb36",
+        "7b29afb2ccff"
+      ],
+      "recallDays": [
+        "2026-05-12",
+        "2026-05-13"
+      ],
+      "conceptTags": [
+        "bug-005",
+        "bug-003",
+        "apptheme.swift",
+        "baclevel.color",
+        "bugs.md",
+        "drinktype.typicalvolumeml",
+        "drinktype.emoji",
+        "baclevel.levelnumber"
+      ]
+    }
+  }
+}

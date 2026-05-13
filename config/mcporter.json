@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "xiaohongshu": {
+      "command": "xiaohongshu-mcp",
+      "env": {
+        "XIAOHONGSHU_COOKIE": "a1=19e1007f878ujs7w5ap10l0x9sp9jkwmoutv1wuow50000337938; web_session=0400698d0b767c153c4e2c4a35384bf52f58d8"
+      }
+    }
+  }
+}
