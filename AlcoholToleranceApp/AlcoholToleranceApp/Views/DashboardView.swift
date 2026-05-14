@@ -1,7 +1,8 @@
 import SwiftUI
 
 // ============================================================
-// [corrupted comment removed]
+// 首页仪表盘 — BAC 弧线 + 等级信息 + 统计网格 + 快捷入口
+// ============================================================
 
 struct DashboardView: View {
     @ObservedObject var vm: DashboardVM
@@ -23,7 +24,7 @@ struct DashboardView: View {
         .task { vm.refresh() }
     }
 
-// [corrupted comment removed]
+    /// 顶部标题栏
     private var headerSection: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
@@ -42,7 +43,7 @@ struct DashboardView: View {
     }
 
     private var refreshButton: some View {
-        Button { Task { await vm.refresh() } } label: {
+        Button { vm.refresh() } label: {
             Image(systemName: "arrow.clockwise")
                 .font(.body)
                 .foregroundColor(NeonColors.accent)
@@ -51,14 +52,14 @@ struct DashboardView: View {
         }
     }
 
-// [corrupted comment removed]
+    /// BAC 仪表盘弧线区域
     private var bacGaugeSection: some View {
         VStack(spacing: 0) {
             ZStack {
-// [corrupted comment removed]
+            // 背景轨道（半透明）
                     .stroke(Color.white.opacity(0.08), lineWidth: 24)
 
-// [corrupted comment removed]
+            // BAC 进度弧（渐变色 + 阴影）
                     .stroke(
                         AngularGradient(
                             gradient: Gradient(colors: bacGradientColors),
@@ -75,7 +76,7 @@ struct DashboardView: View {
                     .stroke(Color.white.opacity(0.05), lineWidth: 2)
                     .scaleEffect(0.82)
 
-// [corrupted comment removed]
+            // 圆心信息（emoji + 数值 + 等级）
                     Text(vm.bacLevel.emoji)
                         .font(.system(size: 40))
                     Text(BACCalculator.formatBAC(vm.currentBAC, style: .mgPer100mL))
@@ -98,7 +99,8 @@ struct DashboardView: View {
         .padding(.horizontal, 4)
     }
 
-// [corrupted comment removed]
+    /// BAC 归一化进度（0.0 ~ 1.0，对应 0% ~ 0.40%）
+    private var bacGaugeProgress: CGFloat {
         min(CGFloat(vm.currentBAC) / 0.40, 1.0)
     }
 
@@ -160,8 +162,8 @@ struct DashboardView: View {
             )
             StatCard(
                 icon: "figure.walk",
-                value: vm.currentBAC < 0.02 ? "/*?*/? : "/*?*/",
-                label: "/*?*/?,
+                value: vm.currentBAC < 0.02 ? "可以驾驶" : "请勿驾驶",
+                label: "驾驶状态",
                 color: vm.currentBAC < 0.02 ? NeonColors.safe : NeonColors.danger
             )
         }

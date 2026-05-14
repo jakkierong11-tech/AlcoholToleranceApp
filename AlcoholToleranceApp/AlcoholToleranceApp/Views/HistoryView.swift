@@ -1,7 +1,7 @@
 import SwiftUI
 
 // ============================================================
-// [corrupted comment removed]
+// 历史记录视图 — 过往饮酒会话列表
 // 展示过往饮酒会话列表，支持筛选、删除、详情展开
 // ============================================================
 
@@ -73,7 +73,7 @@ struct HistoryView: View {
                             }
                         }
                         .onTapGesture {
-// [corrupted comment removed]
+                            // 展开会话详情
                         }
                 }
             }
@@ -90,11 +90,11 @@ struct HistoryView: View {
                 .font(.system(size: 60))
                 .foregroundColor(NeonColors.textSecondary.opacity(0.4))
 
-            Text("/*?*/?)
+            Text("暂无记录")
                 .font(.title3.bold())
                 .foregroundColor(NeonColors.textPrimary)
 
-            Text("/*?*/?)
+            Text("完成第一次测试后这里会显示记录")
                 .font(.subheadline)
                 .foregroundColor(NeonColors.textSecondary)
             Spacer()
@@ -103,7 +103,7 @@ struct HistoryView: View {
     }
 }
 
-// [corrupted comment removed]
+/// 会话行组件
 struct SessionRow: View {
     let session: DrinkSession
 
@@ -114,7 +114,7 @@ struct SessionRow: View {
                 Text(bacEmoji)
                     .font(.system(size: 36))
 
-// [corrupted comment removed]
+                VStack(alignment: .leading, spacing: 4) {
                     // 日期
                     Text(session.startTime, style: .date)
                         .font(.subheadline.bold())
@@ -126,17 +126,17 @@ struct SessionRow: View {
                             .foregroundColor(NeonColors.textSecondary)
 
                         if let result = session.bacResult {
-                            Text("/*?*/?)
+                            Text("BAC:")
                                 .foregroundColor(NeonColors.textSecondary)
 
                             Text(BACCalculator.formatBAC(result.bacPercent))
                                 .font(.caption)
                                 .foregroundColor(bacColor)
 
-                            Text("/*?*/?)
+                            Text("评分:")
                                 .foregroundColor(NeonColors.textSecondary)
 
-                            Text("\(String(format: "%.0f", result.toleranceScore))/*?*/?)
+                            Text("\(String(format: "%.0f", result.toleranceScore))/100")
                                 .font(.caption)
                                 .foregroundColor(scoreColor)
                         }
@@ -145,9 +145,15 @@ struct SessionRow: View {
 
                 Spacer()
 
-// [corrupted comment removed]
-                    .font(.caption)
-                    .foregroundColor(NeonColors.textSecondary.opacity(0.5))
+            VStack(alignment: .trailing, spacing: 2) {
+                if let result = session.bacResult {
+                    Text(BACCalculator.formatBAC(result.bacPercent))
+                        .font(.caption)
+                        .foregroundColor(bacColor)
+                }
+            }
+            .font(.caption)
+            .foregroundColor(NeonColors.textSecondary.opacity(0.5))
             }
             .padding()
             .background(NeonColors.cardBackground)

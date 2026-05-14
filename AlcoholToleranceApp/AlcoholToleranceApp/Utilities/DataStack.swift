@@ -2,7 +2,8 @@ import Foundation
 import SwiftData
 
 // MARK: - SwiftData 共享容器
-// [corrupted comment removed]
+
+/// 单例共享容器，App 启动时创建，包含所有 Model 类型
 enum DataStack {
     static let shared = DataStack()
 

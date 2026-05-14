@@ -1,17 +1,18 @@
 import SwiftUI
 
 // ============================================================
-// [corrupted comment removed]
+// BAC 弧形仪表盘 — 赛博朋克风格 360° 圆弧
+// ============================================================
 
 struct BACGauge: View {
     let bacPercent: Double
     var size: CGFloat = 200
 
-// [corrupted comment removed]
+    /// 动画进度（0→normalizedBAC）
     @State private var animationProgress: Double = 0
     @State private var glowOpacity: Double = 0.3
 
-// [corrupted comment removed]
+    /// 根据 BAC 百分比动态计算当前等级
     private var bacLevel: BACLevel {
         switch bacPercent {
         case ..<0.020:  return .sober
@@ -75,7 +76,7 @@ struct BACGauge: View {
                 .rotationEffect(.degrees(arcRotation))
                 .frame(width: size, height: size)
 
-// [corrupted comment removed]
+            // BAC 进度弧（渐变色）
                 .trim(from: 0, to: trimEnd)
                 .stroke(
                     AngularGradient(

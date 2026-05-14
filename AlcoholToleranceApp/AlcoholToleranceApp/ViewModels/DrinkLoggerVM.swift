@@ -2,15 +2,16 @@ import Foundation
 import SwiftUI
 import SwiftData
 
-// [corrupted comment removed]
+/// 饮酒记录状态枚举
 enum DrinkLoggerState { case idle, recording, done }
 
 // MARK: - 饮酒记录 ViewModel（快速记录，不绑定完整测试流程）
-// [corrupted comment removed]
+
+/// 快速饮酒记录 ViewModel
 /// 可独立使用，也可嵌入 TestSessionVM 协作为辅助记录器
 @MainActor
 final class DrinkLoggerVM: ObservableObject {
-// [corrupted comment removed]
+    /// 已发布的 View 绑定属性
     @Published var state: DrinkLoggerState = .idle
     @Published var selectedDrinkType: DrinkType = .beer
     @Published var volumeMl: Double = 500
@@ -36,7 +37,7 @@ final class DrinkLoggerVM: ObservableObject {
     private let userManager: UserManager
     private var user: User
 
-// [corrupted comment removed]
+    /// 初始化 ViewModel 并预加载用户
     init(modelContext: ModelContext) {
         self.userManager = UserManager(modelContext: modelContext)
         self.user = userManager.fetchOrCreateUser()
@@ -66,7 +67,7 @@ final class DrinkLoggerVM: ObservableObject {
 
     // MARK: - 预估逻辑
 
-// [corrupted comment removed]
+    /// 预估单杯酒的 BAC 峰值
     func estimateSingleDrinkBAC() {
         guard volumeMl > 0, abv > 0, abv <= 100, user.weightKg > 0 else {
             estimatedBAC = nil
@@ -100,7 +101,8 @@ final class DrinkLoggerVM: ObservableObject {
         )
     }
 
-// [corrupted comment removed]
+    /// 刷新预估（BAC + 标准单位）
+    func refreshEstimates() {
         estimateSingleDrinkBAC()
         calculateStandardDrinks()
     }
@@ -148,8 +150,8 @@ final class DrinkLoggerVM: ObservableObject {
         loggedDrinks.removeAll()
     }
 
-// [corrupted comment removed]
-// [corrupted comment removed]
+    /// 累计标准饮酒单位
+    var totalStandardDrinks: Double {
         loggedDrinks.reduce(0) { $0 + $1.standardDrinks }
     }
 
@@ -167,24 +169,27 @@ final class DrinkLoggerVM: ObservableObject {
 
     // MARK: - 醒酒时间
 
-// [corrupted comment removed]
+    /// 预估醒酒所需小时数
+    var estimatedSoberHours: Double? {
         guard let bac = estimatedBAC, bac > 0 else { return nil }
         return BACCalculator.calculateSoberTime(currentBAC: bac)
     }
 
-// [corrupted comment removed]
+    /// 醒酒时间（格式化字符串）
+    var estimatedSoberTimeString: String? {
         guard let hours = estimatedSoberHours else { return nil }
         return BACCalculator.formatSoberTime(hours: hours)
     }
 
-// [corrupted comment removed]
+    /// 预估安全驾驶时间点
+    var estimatedSafeToDrive: Date? {
         let limit = legalRegion.drinkDriveLimit
         guard let bac = estimatedBAC, bac >= limit else { return nil }
         let soberHours = BACCalculator.calculateSoberTime(currentBAC: bac - limit)
         return Date().addingTimeInterval(soberHours * 3600)
     }
 
-// [corrupted comment removed]
+    /// 当前区域法定饮酒驾驶阈值
     var legalLimitBAC: Double { legalRegion.drinkDriveLimit }
     var duiLimitBAC: Double { legalRegion.duiLimit }
 
@@ -196,12 +201,12 @@ final class DrinkLoggerVM: ObservableObject {
 
     /// 驾驶建议（区域感知）
     var drivingAdvice: String {
-        guard let bac = estimatedBAC else { return "/*?*/? }
+        guard let bac = estimatedBAC else { return "暂无数据" }
         return legalRegion.drivingAdvice(for: bac)
     }
 }
 
-// [corrupted comment removed]
+/// 快速饮酒日志（本地临时记录，不持久化）
 struct QuickDrinkLog: Identifiable {
     let id = UUID()
     let drinkType: DrinkType

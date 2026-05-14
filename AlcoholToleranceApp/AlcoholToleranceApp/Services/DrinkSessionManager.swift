@@ -3,25 +3,24 @@ import SwiftData
 
 // MARK: - DrinkSessionManager
 
-// [corrupted comment removed]
-// [corrupted comment removed]
-// [corrupted comment removed]
-// [corrupted comment removed]
-// [corrupted comment removed]
+/// 饮酒会话管理器 — 负责会话创建、饮酒记录增删、会话结算
+/// 基于 SwiftData 持久化，所有操作在主 Actor 上执行
 @MainActor
 final class DrinkSessionManager {
     private let modelContext: ModelContext
     private let bacCalculator = BACCalculator.self
 
-// [corrupted comment removed]
+    /// 初始化管理器并注入 SwiftData 上下文
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
     }
 
     // MARK: - 会话管理
 
-// [corrupted comment removed]
-// [corrupted comment removed]
+    /// 创建新饮酒会话
+    /// - Parameters:
+    ///   - user: 关联用户
+    ///   - isEmptyStomach: 是否空腹
     @discardableResult
     func startSession(user: User?, isEmptyStomach: Bool = false) -> DrinkSession {
         let session = DrinkSession(
@@ -41,13 +40,13 @@ final class DrinkSessionManager {
         return session
     }
 
-// [corrupted comment removed]
-// [corrupted comment removed]
+    /// 向会话添加一杯酒
     /// - Parameters:
     ///   - session: 目标会话
-// [corrupted comment removed]
-// [corrupted comment removed]
-// [corrupted comment removed]
+    ///   - drinkType: 饮品类型
+    ///   - volumeML: 饮用量（毫升）
+    ///   - abv: 酒精度数（可选，默认使用类型默认值）
+    ///   - drankAt: 饮用时间（默认当前时间）
     func addDrink(
         to session: DrinkSession,
         type drinkType: DrinkType,
@@ -90,7 +89,7 @@ final class DrinkSessionManager {
     /// - Parameters:
     ///   - session: 目标会话
     ///   - entries: [(drinkType, volumeML, abv?)] 数组
-// [corrupted comment removed]
+    /// - Returns: 创建的记录数组
     @discardableResult
     func addDrinks(
         to session: DrinkSession,
@@ -129,15 +128,15 @@ final class DrinkSessionManager {
 
     // MARK: - 会话结算
 
-// [corrupted comment removed]
+    /// 结束会话并结算
     ///
     /// 使用 Widmark 公式计算累积 BAC，同时计算：
-// [corrupted comment removed]
-// [corrupted comment removed]
+    /// - toleranceScore（酒量评分）
+    /// - BACLevel（等级判定）
     /// - Parameters:
     ///   - session: 要结束的会话
-// [corrupted comment removed]
-// [corrupted comment removed]
+    ///   - metabolismRate: 自定义代谢速率（默认 0.015）
+    ///   - isEmptyStomach: 是否空腹（影响吸收系数）
     /// - Throws: SessionError 相关错误
     @discardableResult
     func endSession(
@@ -170,7 +169,15 @@ final class DrinkSessionManager {
             isEmptyStomach: isEmptyStomach
         )
 
-// [corrupted comment removed]
+        // 总酒精克数
+        let totalAlcoholGrams = session.drinkRecords.reduce(0.0) { $0 + $1.alcoholGrams }
+
+        // 酒量评分
+        let toleranceScore = BACCalculator.calculateSessionScore(
+            bacPercent: bacPercent,
+            totalAlcoholGrams: totalAlcoholGrams,
+            weightKg: user.weightKg
+        )
 
         // 经过时间
         guard let firstDrinkTime = session.drinkRecords.map(\.drankAt).min() else {
@@ -180,12 +187,6 @@ final class DrinkSessionManager {
 
         // 代谢量：metabolizedGrams = metabolismRate(%/h) × elapsedHours × weightKg × 1000 × widmarkFactor / 100
         let metabolizedGrams = metabolismRate * elapsedHours * user.weightKg * 1000 * user.widmarkFactor / 100.0
-
-// [corrupted comment removed]
-            bacPercent: bacPercent,
-            totalAlcoholGrams: totalAlcoholGrams,
-            weightKg: user.weightKg
-        )
 
         // 获取等级信息
         let levelInfo = BACCalculator.getBACLevel(bacPercent: bacPercent)
@@ -222,7 +223,8 @@ final class DrinkSessionManager {
 
     // MARK: - 查询
 
-// [corrupted comment removed]
+    /// 获取用户历史会话列表
+    func fetchSessions(for user: User, limit: Int = 50) -> [DrinkSession] {
         let userId = user.id
         var descriptor = FetchDescriptor<DrinkSession>(
             predicate: #Predicate { $0.user?.id == userId }
@@ -250,19 +252,20 @@ final class DrinkSessionManager {
         do {
             return try modelContext.fetch(descriptor).first
         } catch {
-            print("[DrinkSessionManager] /*?*/? \(error.localizedDescription)")
+            print("[DrinkSessionManager] 获取活跃会话失败: \(error.localizedDescription)")
             return nil
         }
     }
 
-// [corrupted comment removed]
+    /// 删除指定会话
+    func deleteSession(_ session: DrinkSession) throws {
         modelContext.delete(session)
         try modelContext.save()
     }
 
     // MARK: - 辅助计算
 
-// [corrupted comment removed]
+    /// 实时计算当前 BAC（不持久化）
     ///   - session: 当前会话
     ///   - metabolismRate: 代谢速率
     /// - Returns: 当前累积 BAC%
@@ -281,10 +284,11 @@ final class DrinkSessionManager {
         )
     }
 
-// [corrupted comment removed]
+    /// 生成会话摘要文本
+    func generateSummary(for session: DrinkSession) -> String {
         guard session.isCompleted, let result = session.bacResult else {
             let drinkCount = session.drinkRecords.count
-            return "/*?*/ /*?*/ /*?*/?/*?*/?\(drinkCount) /*?*/"
+            return "会话未完成 (进行中: \(drinkCount) 杯)"
         }
 
         let minutes = Int((session.endTime?.timeIntervalSince(session.startTime) ?? 0) / 60)
@@ -322,15 +326,15 @@ enum SessionError: LocalizedError {
         case .alreadyEnded:
             return "会话已经结束"
         case .noDrinksRecorded:
-            return "/*?*/?
+            return "没有饮酒记录"
         case .noUserAssociated:
-            return "/*?*/?
+            return "没有关联用户"
         case .invalidUserWeight:
             return "用户体重无效"
         case .invalidVolume:
-            return "/*?*/?0 /*?*/"
+            return "饮用量必须 > 0 毫升"
         case .invalidAlcoholPercent:
-            return "/*?*/?0-100 /*?*/"
+            return "酒精度必须在 0-100% 范围内"
         case .recordNotFound:
             return "找不到指定的饮酒记录"
         }

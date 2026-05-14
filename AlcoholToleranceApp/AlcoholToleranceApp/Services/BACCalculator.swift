@@ -22,6 +22,19 @@ struct BACCalculator {
 
     /// 计算单次饮酒的理论峰值 BAC%（不含代谢衰减）
     /// ⚠️ 如需时间衰减后的实时 BAC，请使用 `calculateCumulativeBAC`
+    @available(*, deprecated, renamed: "calculatePeakBAC")
+    static func calculateBAC(
+        weightKg: Double,
+        isMale: Bool,
+        volumeML: Double,
+        alcoholPercent: Double,
+        isCarbonated: Bool = false,
+        isEmptyStomach: Bool = false
+    ) -> Double {
+        calculatePeakBAC(weightKg: weightKg, isMale: isMale, volumeML: volumeML,
+            alcoholPercent: alcoholPercent, isCarbonated: isCarbonated, isEmptyStomach: isEmptyStomach)
+    }
+
     static func calculatePeakBAC(
         weightKg: Double,
         isMale: Bool,
