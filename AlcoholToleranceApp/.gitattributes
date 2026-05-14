@@ -1,0 +1,29 @@
+# Auto-detect text files and normalize line endings
+* text=auto
+
+# Swift source files — must be UTF-8
+*.swift text working-tree-encoding=UTF-8 eol=lf
+
+# Xcode project files
+*.pbxproj text eol=lf
+*.xcscheme text eol=lf
+*.plist text eol=lf
+
+# Markdown
+*.md text eol=lf
+
+# YAML (GitHub Actions)
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Shell scripts
+*.sh text eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.xcassets/** binary

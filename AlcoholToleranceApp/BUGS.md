@@ -2,6 +2,7 @@
 
 > 来源：测试工程师 (@tester) + 审查工程师 (@reviewer) + 架构设计师 (@designer)
 > 生成日期：2026-05-11
+> 最后更新：2026-05-14
 
 ---
 
@@ -12,13 +13,14 @@
 - **原因**: 接口契约画了饼但 UserManager 没实现
 - **影响**: ProfileVM 编译失败
 - **修复**: 2026-05-11 22:00, 总管补实现 `UserManager.fetchOrCreateUser()` — 查当前用户，不存在则创建默认用户
-- **审查确认**: ⏳ 待 @reviewer 确认
+- **审查确认**: ✅ 确认已修复（2026-05-14）
 
-### BUG-002: `UserManager.updateUser()` 不存在
+### BUG-002: `UserManager.updateUser()` 不存在 ✅ 已修复
 - **位置**: `ProfileVM.swift:20,25,30,35`
 - **原因**: ProfileVM 调用了不存在的方法名
 - **影响**: ProfileVM 多处编译失败
-- **建议**: 改用 `updateProfile(user:)` 或 `updateUserScore(user:)`
+- **修复**: 已全部改用 `updateProfile(user:isMale:)` / `updateProfile(user:weightKg:)` / `updateProfile(user:nickname:)`
+- **审查确认**: ✅ 确认已修复（2026-05-14）
 
 ---
 
@@ -28,8 +30,7 @@
 - **位置**: BACLevel.colorHex（已含 8 色）+ AppTheme.swift（2026-05-12 新建）
 - **原因**: ~~AppTheme 只定义了 4 个颜色变量~~
 - **修复**: BACLevel 枚举已定义 8 个独立 colorHex，AppTheme.swift 提供 `BACLevel.color` 映射
-- **状态**: ✅ 已修复（2026-05-12 总管）
-- **审查确认**: ⏳ 待 @reviewer 确认
+- **审查确认**: ✅ 确认已修复（2026-05-14）
 
 ---
 
@@ -45,7 +46,7 @@
 - **位置**: `BACCalculator.swift` — `drivingAdvice()` / `isOverLegalLimit()`
 - **原因**: 当前仅覆盖中国标准（0.02% 酒驾 / 0.08% 醉驾），未提供 EU（0.05%）/ US（0.08%）等地区选项
 - **修复**: 2026-05-12 总管新增 `LegalRegion` 枚举（.cn/.us/.eu），`drivingAdvice(bac:region:)` 和 `isOverLegalLimit(bac:region:threshold:)` 支持按地区判断
-- **审查确认**: ⏳ 待 @reviewer 确认
+- **审查确认**: ✅ 确认已修复（2026-05-14）
 
 ---
 
