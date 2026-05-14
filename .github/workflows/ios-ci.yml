@@ -30,6 +30,9 @@ jobs:
         working-directory: AlcoholToleranceApp
         run: xcodegen generate
 
+      - name: 列出可用模拟器
+        run: xcrun simctl list devices available
+
       - name: 编译 App
         id: build
         working-directory: AlcoholToleranceApp
@@ -37,7 +40,7 @@ jobs:
           xcodebuild build \
             -project AlcoholToleranceApp.xcodeproj \
             -scheme AlcoholToleranceApp \
-            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=latest' \
+            -destination 'generic/platform=iOS Simulator' \
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO
@@ -51,7 +54,7 @@ jobs:
           xcodebuild test \
             -project AlcoholToleranceApp.xcodeproj \
             -scheme AlcoholToleranceApp \
-            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=latest' \
+            -destination 'platform=iOS Simulator,name=Any iOS Simulator Device' \
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO
