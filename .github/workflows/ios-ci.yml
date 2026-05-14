@@ -30,8 +30,14 @@ jobs:
         working-directory: AlcoholToleranceApp
         run: xcodegen generate
 
-      - name: 列出可用模拟器
-        run: xcrun simctl list devices available
+      - name: 创建模拟器
+        id: sim
+        run: |
+          RUNTIME_ID=$(xcrun simctl list runtimes available -j | python3 -c "import json,sys; d=json.load(sys.stdin); r=[r['identifier'] for r in d.get('runtimes',[]) if 'iOS' in r.get('name','')]; print(r[-1] if r else '')")
+          DEVICE_ID=$(xcrun simctl list devicetypes -j | python3 -c "import json,sys; d=json.load(sys.stdin); r=[t['identifier'] for t in d.get('devicetypes',[]) if 'iPhone' in t.get('name','') and 'Pro' not in t.get('name','')]; print(r[-1] if r else 'com.apple.CoreSimulator.SimDeviceType.iPhone-16')")
+          SIM_UDID=$(xcrun simctl create "CI_Device_$RANDOM" "$DEVICE_ID" "$RUNTIME_ID")
+          echo "Using simulator: $SIM_UDID"
+          echo "SIM_UDID=$SIM_UDID" >> $GITHUB_OUTPUT
 
       - name: 编译 App
         id: build
@@ -40,7 +46,7 @@ jobs:
           xcodebuild build \
             -project AlcoholToleranceApp.xcodeproj \
             -scheme AlcoholToleranceApp \
-            -destination 'generic/platform=iOS Simulator' \
+            -destination "platform=iOS Simulator,id=${{ steps.sim.outputs.SIM_UDID }}" \
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO
@@ -54,7 +60,7 @@ jobs:
           xcodebuild test \
             -project AlcoholToleranceApp.xcodeproj \
             -scheme AlcoholToleranceApp \
-            -destination 'platform=iOS Simulator,name=Any iOS Simulator Device' \
+            -destination "platform=iOS Simulator,id=${{ steps.sim.outputs.SIM_UDID }}" \
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO
@@ -101,3 +107,7 @@ jobs:
           curl -s -X POST "$WEBHOOK" -H "Content-Type: application/json" -d @/tmp/discord.json
           echo ""
           echo "Discord 通知已发送"
+
+      - name: 编译日志（失败时）
+        if: steps.build.outcome == 'failure'
+        run: echo "编译失败，请查看上一步日志详情"
