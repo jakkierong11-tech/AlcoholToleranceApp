@@ -142,7 +142,8 @@ final class DrinkSessionManager {
     func endSession(
         _ session: DrinkSession,
         metabolismRate: Double = BACCalculator.defaultMetabolismRate,
-        isEmptyStomach: Bool = false
+        isEmptyStomach: Bool = false,
+        legalRegion: LegalRegion = .cn
     ) throws -> BACResult {
         guard !session.isCompleted else {
             throw SessionError.alreadyEnded
@@ -192,7 +193,7 @@ final class DrinkSessionManager {
         let levelInfo = BACCalculator.getBACLevel(bacPercent: bacPercent)
 
         // 驾驶建议
-        let drivingStatus = BACCalculator.drivingAdvice(bacPercent: bacPercent)
+        let drivingStatus = legalRegion.drivingAdvice(for: bacPercent)
 
         let result = BACResult(
             id: UUID(),

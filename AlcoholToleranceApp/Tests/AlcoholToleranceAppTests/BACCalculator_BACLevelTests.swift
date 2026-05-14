@@ -119,8 +119,8 @@ final class BACCalculator_BACLevelTests: XCTestCase {
 
     // MARK: - 评分函数
 
-    /// 测试 calculateSessionScore — BAC 越低分数越高（耐受度越好）
-    func test_calculateSessionScore_lowerBACHigherScore() {
+    /// 测试 calculateSessionScore — BAC 越高分数越高（耐受度越强）
+    func test_calculateSessionScore_higherBACHigherScore() {
         let score1 = sut.calculateSessionScore(
             bacPercent: 0.02, totalAlcoholGrams: 20, weightKg: 70
         )
@@ -128,8 +128,8 @@ final class BACCalculator_BACLevelTests: XCTestCase {
             bacPercent: 0.20, totalAlcoholGrams: 20, weightKg: 70
         )
 
-        XCTAssertGreaterThan(score1, score2,
-            "BAC 越低，sessionScore 应越高（耐受度越好）")
+        XCTAssertGreaterThan(score2, score1,
+            "BAC 越高，sessionScore 应越高（耐受度越强）")
     }
 
     /// 测试 calculateSessionScore 边界 — 极低体重
