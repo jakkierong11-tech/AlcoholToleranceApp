@@ -37,11 +37,8 @@ targets:
     sources:
       - path: Tests/AlcoholToleranceAppTests
         excludes:
-          - "**/*.swift"
+          - "EmptyTest.swift"
           - "**/.DS_Store"
-      - path: Tests/AlcoholToleranceAppTests
-        includes:
-          - "BACCalculator_MetabolismTests.swift"
     dependencies:
       - target: AlcoholToleranceApp
     settings:
