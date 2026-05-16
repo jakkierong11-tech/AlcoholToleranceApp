@@ -37,17 +37,7 @@ jobs:
             -scheme AlcoholToleranceApp \
             -sdk iphonesimulator \
             -configuration Debug \
-            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
-            > xcodebuild.log 2>&1
-        shell: bash
-
-      - name: 提取编译错误
-        if: failure()
-        run: |
-          echo "=== BUILD ERRORS ==="
-          grep -i "error:" AlcoholToleranceApp/xcodebuild.log || echo "no error: lines found"
-          echo "=== LAST 20 LINES ==="
-          tail -20 AlcoholToleranceApp/xcodebuild.log
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
         shell: bash
 
       - name: 测试
