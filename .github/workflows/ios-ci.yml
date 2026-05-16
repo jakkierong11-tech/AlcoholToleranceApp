@@ -27,7 +27,9 @@ jobs:
 
       - name: 生成 xcodeproj
         working-directory: AlcoholToleranceApp
-        run: xcodegen generate
+        run: |
+          rm -rf AlcoholToleranceApp.xcodeproj
+          xcodegen generate
 
       - name: 编译 App
         id: build
@@ -39,7 +41,15 @@ jobs:
             -destination "platform=iOS Simulator,name=Any iOS Simulator Device" \
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO
+            CODE_SIGNING_REQUIRED=NO 2>&1 | tee /tmp/build.log
+
+      - name: 上传构建日志
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: /tmp/build.log
+          retention-days: 3
 
       - name: 运行测试
         id: test
