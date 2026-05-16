@@ -36,8 +36,11 @@ targets:
     sources:
       - path: Tests/AlcoholToleranceAppTests
         excludes:
-          - "EmptyTest.swift"
+          - "**/*.swift"
           - "**/.DS_Store"
+      - path: Tests/AlcoholToleranceAppTests
+        includes:
+          - "EmptyTest.swift"
     dependencies:
       - target: AlcoholToleranceApp
     settings:
