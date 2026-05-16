@@ -37,11 +37,8 @@ targets:
     sources:
       - path: Tests/AlcoholToleranceAppTests
         excludes:
-          - "**/*.swift"
-      # placeholder: minimal test runner to verify build
-      - path: Tests/AlcoholToleranceAppTests
-        includes:
           - "EmptyTest.swift"
+          - "**/.DS_Store"
     dependencies:
       - target: AlcoholToleranceApp
     settings:
