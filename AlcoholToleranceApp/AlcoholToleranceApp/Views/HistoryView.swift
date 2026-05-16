@@ -149,15 +149,15 @@ struct SessionRow: View {
 
                 Spacer()
 
-            VStack(alignment: .trailing, spacing: 2) {
-                if let result = session.bacResult {
-                    Text(BACCalculator.formatBAC(result.bacPercent))
-                        .font(.caption)
-                        .foregroundColor(bacColor)
+                VStack(alignment: .trailing, spacing: 2) {
+                    if let result = session.bacResult {
+                        Text(BACCalculator.formatBAC(result.bacPercent))
+                            .font(.caption)
+                            .foregroundColor(bacColor)
+                    }
                 }
-            }
-            .font(.caption)
-            .foregroundColor(NeonColors.textSecondary.opacity(0.5))
+                .font(.caption)
+                .foregroundColor(NeonColors.textSecondary.opacity(0.5))
             }
             .padding()
             .background(NeonColors.cardBackground)

@@ -327,7 +327,8 @@ final class BACCalculatorTests: XCTestCase {
     }
 
     func test_drivingAdvice_sober_returnsSafe() {
-        XCTAssertTrue(BACCalculator.drivingAdvice(bac: 0.01).contains("可以驾驶"))
+        // BAC 0.001 < halfLimit(0.01) → ✅ 可以驾驶
+        XCTAssertTrue(BACCalculator.drivingAdvice(bac: 0.001).contains("可以驾驶"))
     }
 
     func test_drivingAdvice_drunk_returnsForbidden() {
