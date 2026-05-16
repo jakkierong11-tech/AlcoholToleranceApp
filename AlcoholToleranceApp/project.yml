@@ -10,7 +10,6 @@ settings:
     SWIFT_VERSION: "5.9"
     CODE_SIGN_STYLE: Automatic
     DEVELOPMENT_TEAM: ""
-    ENABLE_DEBUG_DYLIB: NO
 
 targets:
   AlcoholToleranceApp:
@@ -28,7 +27,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.alcoholtolerance.app
         GENERATE_INFOPLIST_FILE: YES
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG
-        ENABLE_DEBUG_DYLIB: NO
+        ENABLE_TESTABILITY: YES
     dependencies: []
 
   AlcoholToleranceAppTests:
