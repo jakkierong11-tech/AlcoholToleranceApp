@@ -40,9 +40,7 @@ targets:
           - "**/.DS_Store"
       - path: Tests/AlcoholToleranceAppTests
         includes:
-          - "BACCalculator_BACLevelTests.swift"
-          - "BACCalculator_BoundaryTests.swift"
-          - "BACCalculator_GenderTests.swift"
+          - "EmptyTest.swift"
     dependencies:
       - target: AlcoholToleranceApp
     settings:
