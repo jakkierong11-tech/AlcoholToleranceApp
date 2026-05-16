@@ -623,23 +623,23 @@ final class DrinkSessionManagerTests: XCTestCase {
 final class BACCalculator_RegionTests: XCTestCase {
 
     func test_drivingAdvice_regionAware_cn() {
-        let advice = BACCalculator.drivingAdvice(bac: 0.03, region: .cn)
+        let advice = LegalRegion.cn.drivingAdvice(for: 0.03, region: .cn)
         XCTAssertTrue(advice.contains("中国") || advice.contains("大陆"))
     }
 
     func test_drivingAdvice_regionAware_us() {
-        let advice = BACCalculator.drivingAdvice(bac: 0.09, region: .us)
+        let advice = LegalRegion.cn.drivingAdvice(for: 0.09, region: .us)
         XCTAssertTrue(advice.contains("美国"))
     }
 
     func test_drivingAdvice_regionAware_eu() {
-        let advice = BACCalculator.drivingAdvice(bac: 0.06, region: .eu)
+        let advice = LegalRegion.cn.drivingAdvice(for: 0.06, region: .eu)
         XCTAssertTrue(advice.contains("欧盟"))
     }
 
     func test_drivingAdvice_deprecated_stillWorks() {
         // 废弃方法仍应正常工作
-        let advice = BACCalculator.drivingAdvice(bac: 0.01)
+        let advice = LegalRegion.cn.drivingAdvice(for: 0.01)
         XCTAssertTrue(advice.contains("可以驾驶"))
     }
 
