@@ -27,24 +27,15 @@ jobs:
           echo "=== Available iPhone Devices ==="
           xcrun simctl list devices available | grep "iPhone 16" | head -3
 
-      - name: 编译
+      - name: 编译 & 测试
         run: |
           cd AlcoholToleranceApp
-          xcodebuild build-for-testing \
-            -project AlcoholToleranceApp.xcodeproj \
-            -scheme AlcoholToleranceApp \
-            -sdk iphonesimulator \
-            -configuration Debug \
-            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
-
-      - name: 测试
-        run: |
-          cd AlcoholToleranceApp
-          xcodebuild test-without-building \
+          xcodebuild test \
             -project AlcoholToleranceApp.xcodeproj \
             -scheme AlcoholToleranceApp \
             -destination 'platform=iOS Simulator,name=iPad (10th generation)' \
             -configuration Debug \
+            -resultBundlePath ../test-results.xcresult \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
 
       - name: 打包并上传 Appetize.io
