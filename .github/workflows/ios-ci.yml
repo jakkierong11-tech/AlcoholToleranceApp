@@ -35,7 +35,7 @@ jobs:
           xcodebuild build \
             -project AlcoholToleranceApp.xcodeproj \
             -scheme AlcoholToleranceApp \
-            -destination 'generic/platform=iOS Simulator' \
+            -sdk iphonesimulator \
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
 
