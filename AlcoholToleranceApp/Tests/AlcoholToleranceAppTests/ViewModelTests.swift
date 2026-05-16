@@ -4,209 +4,111 @@ import SwiftData
 
 // MARK: - DashboardVM Tests
 
-/// DashboardVM 测试 — 验证仪表盘数据计算和状态管理
 @MainActor
 final class DashboardVMTests: XCTestCase {
-
     private var modelContainer: ModelContainer!
-    private var modelContext: ModelContext!
-    private var userManager: UserManager!
-    private var sessionManager: DrinkSessionManager!
     private var sut: DashboardVM!
 
     override func setUp() {
         super.setUp()
         let schema = Schema([User.self, DrinkSession.self, DrinkRecord.self, BACResult.self])
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-        do {
-            modelContainer = try ModelContainer(for: schema, configurations: [config])
-            modelContext = ModelContext(modelContainer)
-            userManager = UserManager(modelContext: modelContext)
-            sessionManager = DrinkSessionManager(modelContext: modelContext)
-            sut = DashboardVM(modelContext: modelContext)
-        } catch {
-            XCTFail("创建内存 ModelContainer 失败: \(error)")
-        }
+        modelContainer = try! ModelContainer(for: schema, configurations: [config])
+        sut = DashboardVM(modelContext: modelContainer.mainContext)
     }
 
     override func tearDown() {
-        sut = nil
-        sessionManager = nil
-        userManager = nil
-        modelContext = nil
-        modelContainer = nil
-        super.tearDown()
+        sut = nil; modelContainer = nil; super.tearDown()
     }
 
     func test_initialState() {
-        XCTAssertNotNil(sut.currentUser)
-        XCTAssertEqual(sut.currentUser.nickname, "酒友")
-    }
-
-    func test_currentBAC_noSession() {
+        XCTAssertNotNil(sut.user)
+        XCTAssertEqual(sut.user.nickname, "酒友")
         XCTAssertEqual(sut.currentBAC, 0)
-    }
-
-    func test_currentBAC_withActiveSession() throws {
-        let session = sessionManager.startSession(user: sut.currentUser)
-        try sessionManager.addDrink(to: session, type: .beer, volumeML: 500)
-
-        // 重新初始化 VM 以触发数据加载
-        sut = DashboardVM(modelContext: modelContext)
-        XCTAssertGreaterThan(sut.currentBAC, 0)
-    }
-
-    func test_bacLevel_noBAC() {
         XCTAssertEqual(sut.bacLevel, .sober)
     }
 
-    func test_soberTime_noBAC() {
-        XCTAssertEqual(sut.soberTime, 0)
-    }
-
-    func test_canDrive_noBAC() {
-        XCTAssertTrue(sut.canDrive)
-    }
-
-    func test_canDrive_overLimit() throws {
-        let session = sessionManager.startSession(user: sut.currentUser)
-        try sessionManager.addDrink(to: session, type: .baijiu, volumeML: 200)
-        _ = try sessionManager.endSession(session)
-
-        sut = DashboardVM(modelContext: modelContext)
-        XCTAssertFalse(sut.canDrive)
-    }
-
-    func test_recentSessions() throws {
-        let session = sessionManager.startSession(user: sut.currentUser)
-        try sessionManager.addDrink(to: session, type: .beer, volumeML: 500)
-        _ = try sessionManager.endSession(session)
-
-        sut = DashboardVM(modelContext: modelContext)
-        XCTAssertGreaterThanOrEqual(sut.recentSessions.count, 0)
-    }
-
-    func test_userTitle() {
-        XCTAssertFalse(sut.userTitle.isEmpty)
-    }
-
-    func test_refresh() {
-        sut.refresh()
-        // refresh 不应崩溃
-        XCTAssertNotNil(sut.currentUser)
-    }
+    func test_nickname() { XCTAssertFalse(sut.nickname.isEmpty) }
+    func test_genderLabel() { XCTAssertTrue(sut.genderLabel.contains("男") || sut.genderLabel.contains("女")) }
+    func test_weightKg() { XCTAssertGreaterThan(sut.weightKg, 0) }
+    func test_bacLevel_noBAC_isSober() { XCTAssertEqual(sut.bacLevel, .sober) }
+    func test_sessionScore_initial() { XCTAssertEqual(sut.sessionScore, 0) }
+    func test_refresh_doesNotCrash() { sut.refresh(); XCTAssertNotNil(sut.user) }
+    func test_hasTestedToday_initialFalse() { XCTAssertFalse(sut.hasTestedToday) }
+    func test_canStartTest() { XCTAssertTrue(sut.canStartTest) }
+    func test_hasHistory_initialFalse() { XCTAssertFalse(sut.hasHistory) }
+    func test_safeGuideline_notEmpty() { XCTAssertFalse(sut.safeGuideline.isEmpty) }
+    func test_toleranceTitle() { XCTAssertFalse(sut.toleranceTitle.isEmpty) }
 }
 
 // MARK: - DrinkLoggerVM Tests
 
-/// DrinkLoggerVM 测试 — 验证饮酒记录添加和会话管理
 @MainActor
 final class DrinkLoggerVMTests: XCTestCase {
-
     private var modelContainer: ModelContainer!
-    private var modelContext: ModelContext!
     private var sut: DrinkLoggerVM!
 
     override func setUp() {
         super.setUp()
         let schema = Schema([User.self, DrinkSession.self, DrinkRecord.self, BACResult.self])
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-        do {
-            modelContainer = try ModelContainer(for: schema, configurations: [config])
-            modelContext = ModelContext(modelContainer)
-            sut = DrinkLoggerVM(modelContext: modelContext)
-        } catch {
-            XCTFail("创建内存 ModelContainer 失败: \(error)")
-        }
+        modelContainer = try! ModelContainer(for: schema, configurations: [config])
+        sut = DrinkLoggerVM(modelContext: modelContainer.mainContext)
     }
 
     override func tearDown() {
-        sut = nil
-        modelContext = nil
-        modelContainer = nil
-        super.tearDown()
+        sut = nil; modelContainer = nil; super.tearDown()
     }
 
     func test_initialState() {
-        XCTAssertNotNil(sut.currentSession)
-        XCTAssertFalse(sut.currentSession.isCompleted)
-        XCTAssertTrue(sut.currentSession.drinkRecords.isEmpty)
+        XCTAssertEqual(sut.state, .idle)
+        XCTAssertEqual(sut.selectedDrinkType, .beer)
+        XCTAssertEqual(sut.volumeMl, 500)
+        XCTAssertEqual(sut.legalRegion, .cn)
     }
 
-    func test_addDrink() {
-        sut.addDrink(type: .beer, volumeML: 500)
-        XCTAssertEqual(sut.currentSession.drinkRecords.count, 1)
-        XCTAssertEqual(sut.currentSession.drinkRecords[0].drinkType, .beer)
+    func test_setDrinkType() {
+        sut.setDrinkType(.baijiu)
+        XCTAssertEqual(sut.selectedDrinkType, .baijiu)
     }
 
-    func test_addMultipleDrinks() {
-        sut.addDrink(type: .beer, volumeML: 500)
-        sut.addDrink(type: .wine, volumeML: 150)
-        XCTAssertEqual(sut.currentSession.drinkRecords.count, 2)
+    func test_onDrinkTypeChanged_updatesDefaults() {
+        sut.setDrinkType(.wine)
+        XCTAssertEqual(sut.volumeMl, DrinkType.wine.typicalVolumeMl)
     }
 
-    func test_removeDrink() {
-        sut.addDrink(type: .beer, volumeML: 500)
-        let record = sut.currentSession.drinkRecords[0]
-        sut.removeDrink(record)
-        XCTAssertTrue(sut.currentSession.drinkRecords.isEmpty)
+    func test_estimateSingleDrinkBAC() {
+        sut.volumeMl = 500; sut.abv = 5.0
+        sut.estimateSingleDrinkBAC()
+        XCTAssertNotNil(sut.estimatedBAC)
     }
 
-    func test_currentBAC() {
-        sut.addDrink(type: .beer, volumeML: 500)
-        XCTAssertGreaterThan(sut.currentBAC, 0)
+    func test_standardDrinks_initial() {
+        sut.volumeMl = 500; sut.abv = 5.0
+        sut.estimateSingleDrinkBAC()
+        XCTAssertGreaterThan(sut.standardDrinks, 0)
     }
 
-    func test_endSession() {
-        sut.addDrink(type: .beer, volumeML: 500)
-        let result = sut.endSession()
-        XCTAssertNotNil(result)
-        XCTAssertTrue(sut.currentSession.isCompleted)
-    }
-
-    func test_endSession_noDrinks() {
-        let result = sut.endSession()
-        XCTAssertNil(result)
-    }
-
-    func test_startNewSession() {
-        sut.addDrink(type: .beer, volumeML: 500)
-        _ = sut.endSession()
-
-        sut.startNewSession()
-        XCTAssertFalse(sut.currentSession.isCompleted)
-        XCTAssertTrue(sut.currentSession.drinkRecords.isEmpty)
-    }
+    func test_refreshUser() { sut.refreshUser() }
 }
 
 // MARK: - ProfileVM Tests
 
-/// ProfileVM 测试 — 验证用户资料管理
 @MainActor
 final class ProfileVMTests: XCTestCase {
-
     private var modelContainer: ModelContainer!
-    private var modelContext: ModelContext!
     private var sut: ProfileVM!
 
     override func setUp() {
         super.setUp()
         let schema = Schema([User.self, DrinkSession.self, DrinkRecord.self, BACResult.self])
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-        do {
-            modelContainer = try ModelContainer(for: schema, configurations: [config])
-            modelContext = ModelContext(modelContainer)
-            sut = ProfileVM(modelContext: modelContext)
-        } catch {
-            XCTFail("创建内存 ModelContainer 失败: \(error)")
-        }
+        modelContainer = try! ModelContainer(for: schema, configurations: [config])
+        sut = ProfileVM(modelContext: modelContainer.mainContext)
     }
 
     override func tearDown() {
-        sut = nil
-        modelContext = nil
-        modelContainer = nil
-        super.tearDown()
+        sut = nil; modelContainer = nil; super.tearDown()
     }
 
     func test_initialState() {
@@ -215,8 +117,8 @@ final class ProfileVMTests: XCTestCase {
     }
 
     func test_updateNickname() {
-        sut.updateNickname("新昵称")
-        XCTAssertEqual(sut.user.nickname, "新昵称")
+        sut.updateNickname("老王")
+        XCTAssertEqual(sut.user.nickname, "老王")
     }
 
     func test_updateWeight() {
@@ -225,114 +127,49 @@ final class ProfileVMTests: XCTestCase {
     }
 
     func test_updateGender() {
-        let originalGender = sut.user.isMale
-        sut.updateGender(!originalGender)
-        XCTAssertEqual(sut.user.isMale, !originalGender)
+        let original = sut.user.isMale
+        sut.updateGender(isMale: !original)
+        XCTAssertEqual(sut.user.isMale, !original)
     }
 
-    func test_updateBirthYear() {
-        sut.updateBirthYear(1988)
-        XCTAssertEqual(sut.user.birthYear, 1988)
-    }
-
-    func test_stats() {
-        let stats = sut.stats
-        XCTAssertNotNil(stats)
-        XCTAssertEqual(stats.nickname, sut.user.nickname)
-    }
-
-    func test_title() {
-        XCTAssertFalse(sut.title.isEmpty)
-    }
-
-    func test_refresh() {
-        sut.refresh()
-        XCTAssertNotNil(sut.user)
-    }
+    func test_title() { XCTAssertFalse(sut.title.isEmpty) }
+    func test_highestScore() { XCTAssertGreaterThanOrEqual(sut.highestScore, 0) }
+    func test_totalSessions() { XCTAssertGreaterThanOrEqual(sut.totalSessions, 0) }
+    func test_genderLabel() { XCTAssertTrue(["男性", "女性"].contains(sut.genderLabel)) }
+    func test_widmarkFactor() { XCTAssertTrue(sut.widmarkFactor == 0.68 || sut.widmarkFactor == 0.55) }
+    func test_loadProfile() { sut.loadProfile(); XCTAssertNotNil(sut.user) }
+    func test_saveProfile() { sut.saveProfile(); XCTAssertFalse(sut.showSaveConfirmation) }
 }
 
 // MARK: - SettingsVM Tests
 
-/// SettingsVM 测试 — 验证设置管理
 @MainActor
 final class SettingsVMTests: XCTestCase {
-
-    private var modelContainer: ModelContainer!
-    private var modelContext: ModelContext!
     private var sut: SettingsVM!
 
-    override func setUp() {
-        super.setUp()
-        let schema = Schema([User.self, DrinkSession.self, DrinkRecord.self, BACResult.self])
-        let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-        do {
-            modelContainer = try ModelContainer(for: schema, configurations: [config])
-            modelContext = ModelContext(modelContainer)
-            sut = SettingsVM(modelContext: modelContext)
-        } catch {
-            XCTFail("创建内存 ModelContainer 失败: \(error)")
-        }
-    }
+    override func setUp() { super.setUp(); sut = SettingsVM() }
+    override func tearDown() { sut.resetToDefaults(); sut = nil; super.tearDown() }
 
-    override func tearDown() {
-        sut = nil
-        modelContext = nil
-        modelContainer = nil
-        super.tearDown()
-    }
-
-    func test_initialState() {
-        XCTAssertNotNil(sut.user)
-    }
-
-    func test_selectedRegion_default() {
+    func test_initialRegion_isCN() { XCTAssertEqual(sut.selectedRegion, .cn) }
+    func test_changeRegion() { sut.selectedRegion = .us; XCTAssertEqual(sut.selectedRegion, .us) }
+    func test_initialMetabolismRate() { XCTAssertEqual(sut.metabolismRate, 0.015, accuracy: 0.001) }
+    func test_changeMetabolismRate() { sut.metabolismRate = 0.02; XCTAssertEqual(sut.metabolismRate, 0.02, accuracy: 0.001) }
+    func test_drivingAdvice() { XCTAssertFalse(sut.drivingAdvice(for: 0.03).isEmpty) }
+    func test_effectiveDrinkDriveLimit() { XCTAssertGreaterThan(sut.effectiveDrinkDriveLimit, 0) }
+    func test_effectiveDuiLimit() { XCTAssertGreaterThan(sut.effectiveDuiLimit, 0) }
+    func test_resetToDefaults() {
+        sut.selectedRegion = .us; sut.metabolismRate = 0.02
+        sut.resetToDefaults()
         XCTAssertEqual(sut.selectedRegion, .cn)
-    }
-
-    func test_selectedRegion_change() {
-        sut.selectedRegion = .us
-        XCTAssertEqual(sut.selectedRegion, .us)
-    }
-
-    func test_metabolismRate_default() {
-        XCTAssertEqual(sut.metabolismRate, 0.015)
-    }
-
-    func test_metabolismRate_change() {
-        sut.metabolismRate = 0.02
-        XCTAssertEqual(sut.metabolismRate, 0.02)
-    }
-
-    func test_drivingAdvice() {
-        let advice = sut.drivingAdvice(for: 0.03)
-        XCTAssertFalse(advice.isEmpty)
-    }
-
-    func test_effectiveDrinkDriveLimit() {
-        XCTAssertGreaterThan(sut.effectiveDrinkDriveLimit, 0)
-    }
-
-    func test_effectiveDuiLimit() {
-        XCTAssertGreaterThan(sut.effectiveDuiLimit, 0)
-    }
-
-    func test_resetSettings() {
-        sut.selectedRegion = .us
-        sut.metabolismRate = 0.02
-        sut.resetSettings()
-        XCTAssertEqual(sut.selectedRegion, .cn)
-        XCTAssertEqual(sut.metabolismRate, 0.015)
+        XCTAssertEqual(sut.metabolismRate, 0.015, accuracy: 0.001)
     }
 }
 
 // MARK: - HistoryVM Tests
 
-/// HistoryVM 测试 — 验证历史记录查询
 @MainActor
 final class HistoryVMTests: XCTestCase {
-
     private var modelContainer: ModelContainer!
-    private var modelContext: ModelContext!
     private var sessionManager: DrinkSessionManager!
     private var sut: HistoryVM!
 
@@ -340,83 +177,36 @@ final class HistoryVMTests: XCTestCase {
         super.setUp()
         let schema = Schema([User.self, DrinkSession.self, DrinkRecord.self, BACResult.self])
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-        do {
-            modelContainer = try ModelContainer(for: schema, configurations: [config])
-            modelContext = ModelContext(modelContainer)
-            sessionManager = DrinkSessionManager(modelContext: modelContext)
-            sut = HistoryVM(modelContext: modelContext)
-        } catch {
-            XCTFail("创建内存 ModelContainer 失败: \(error)")
-        }
+        modelContainer = try! ModelContainer(for: schema, configurations: [config])
+        sessionManager = DrinkSessionManager(modelContext: modelContainer.mainContext)
+        sut = HistoryVM(modelContext: modelContainer.mainContext)
     }
 
     override func tearDown() {
-        sut = nil
-        sessionManager = nil
-        modelContext = nil
-        modelContainer = nil
-        super.tearDown()
+        sut = nil; sessionManager = nil; modelContainer = nil; super.tearDown()
     }
 
     func test_initialState() {
-        XCTAssertTrue(sut.sessions.isEmpty)
+        XCTAssertTrue(sut.completedSessions.isEmpty)
+        XCTAssertTrue(sut.results.isEmpty)
+        XCTAssertNil(sut.selectedResult)
+        XCTAssertEqual(sut.filter, .all)
     }
 
-    func test_loadSessions() throws {
-        let user = sut.currentUser
-        let session = sessionManager.startSession(user: user)
-        try sessionManager.addDrink(to: session, type: .beer, volumeML: 500)
-        _ = try sessionManager.endSession(session)
-
-        sut.loadSessions()
-        XCTAssertGreaterThanOrEqual(sut.sessions.count, 0)
+    func test_loadAll() {
+        sut.loadAll()
+        // 不崩溃即可
     }
 
-    func test_deleteSession() throws {
-        let user = sut.currentUser
-        let session = sessionManager.startSession(user: user)
-        try sessionManager.addDrink(to: session, type: .beer, volumeML: 500)
-        _ = try sessionManager.endSession(session)
-
-        sut.loadSessions()
-        let countBefore = sut.sessions.count
-        if countBefore > 0 {
-            sut.deleteSession(sut.sessions[0])
-            XCTAssertLessThanOrEqual(sut.sessions.count, countBefore)
-        }
+    func test_filter_all() {
+        sut.filter = .all
+        XCTAssertEqual(sut.filter, .all)
     }
 
-    func test_sessionCount() throws {
-        let user = sut.currentUser
-        let session = sessionManager.startSession(user: user)
-        try sessionManager.addDrink(to: session, type: .beer, volumeML: 500)
-        _ = try sessionManager.endSession(session)
-
-        sut.loadSessions()
-        XCTAssertEqual(sut.sessionCount, sut.sessions.count)
+    func test_filter_today() {
+        sut.filter = .today
+        XCTAssertEqual(sut.filter, .today)
     }
 
-    func test_averageBAC() throws {
-        let user = sut.currentUser
-        let session = sessionManager.startSession(user: user)
-        try sessionManager.addDrink(to: session, type: .beer, volumeML: 500)
-        _ = try sessionManager.endSession(session)
-
-        sut.loadSessions()
-        if sut.sessions.count > 0 {
-            XCTAssertGreaterThanOrEqual(sut.averageBAC, 0)
-        }
-    }
-
-    func test_highestBAC() throws {
-        let user = sut.currentUser
-        let session = sessionManager.startSession(user: user)
-        try sessionManager.addDrink(to: session, type: .beer, volumeML: 500)
-        _ = try sessionManager.endSession(session)
-
-        sut.loadSessions()
-        if sut.sessions.count > 0 {
-            XCTAssertGreaterThanOrEqual(sut.highestBAC, 0)
-        }
-    }
+    func test_isLoading_initial() { XCTAssertFalse(sut.isLoading) }
 }

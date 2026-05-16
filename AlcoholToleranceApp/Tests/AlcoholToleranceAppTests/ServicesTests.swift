@@ -253,7 +253,8 @@ final class UserManagerTests: XCTestCase {
     }
 
     func test_getCurrentTitle() throws {
-        let user = try sut.createUser(nickname: "测试", highestScore: 75)
+        let user = try sut.createUser(nickname: "测试")
+        _ = sut.updateUserScore(user: user, newScore: 75)
         let title = sut.getCurrentTitle(for: user)
         XCTAssertEqual(title.name, "海量选手")
     }
