@@ -313,7 +313,7 @@ struct ProfileEditView: View {
         if let weight = Double(weightText), weight > 0 {
             vm.updateWeight(weight)
         }
-        vm.updateGender(isMale)
+        vm.updateGender(isMale: isMale)
         dismiss()
     }
 }

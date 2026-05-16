@@ -102,7 +102,7 @@ final class TestSessionVM: ObservableObject {
 
     func cancelTest() {
         guard let session else { return }
-        sessionManager.deleteSession(session)
+        try? sessionManager.deleteSession(session)
         self.session = nil
         stopTimer()
     }

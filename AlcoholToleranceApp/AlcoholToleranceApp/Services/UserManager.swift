@@ -233,7 +233,7 @@ final class UserManager {
     ///
     /// - Parameter score: 酒量分数（0-100）
     /// - Returns: ToleranceTitle 称号对象
-    static func getUserTitle(for score: Double) -> ToleranceTitle {
+    nonisolated static func getUserTitle(for score: Double) -> ToleranceTitle {
         switch score {
         case ..<0:
             return ToleranceTitle(name: "新手村", emoji: "🍼", description: "刚刚上路，菜鸟一枚")

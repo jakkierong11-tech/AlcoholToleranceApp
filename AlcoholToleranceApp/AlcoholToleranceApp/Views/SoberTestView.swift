@@ -93,9 +93,9 @@ struct SoberTestView: View {
                         Text("上次测试结果")
                             .font(.caption)
                             .foregroundColor(NeonColors.textSecondary)
-                        Text("得分: \(String(format: "%.0f", lastResult)) / 100")
+                        Text("得分: \(String(format: "%.0f", lastResult.score)) / 100")
                             .font(.body.bold())
-                            .foregroundColor(resultColor(lastResult))
+                            .foregroundColor(resultColor(lastResult.score))
                     }
                     Spacer()
 
