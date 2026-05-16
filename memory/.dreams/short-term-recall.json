@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-16T01:12:08.592Z",
+  "updatedAt": "2026-05-16T01:27:58.631Z",
   "entries": {
     "memory:memory/2026-03-22.md:33:57": {
       "key": "memory:memory/2026-03-22.md:33:57",
@@ -80,13 +80,13 @@
       "endLine": 32,
       "source": "memory",
       "snippet": "# 2026-05-10 - 软件开发团队多 Agent 配置 ## 🎯 核心成果：4 子 Agent Discord Bot 团队 ### Agent 架构 | Agent | Discord Bot | 模型 | API Key | Thinking | |-------|------------|------|---------|----------| | 🔧 main | @jakkierong11_openclawbot | DeepSeek V4 PRO | sk-652...631e | ✅ 开 | | 🎨 designer | @首席架构设计师 | DeepSeek V4 PRO | 共享 main 的 | ❌ 关 | | 💻 developer | @开发工程师 | DeepSeek V4 PRO | sk-1d0...be7c (独立) | ❌ 关 | | 🧪 tester | @测试工程师 | KIMI K2.5 | sk-Clk...FTa4 | ❌ 关 | | 🔍 reviewer | @代码审查工程师 | QWEN 3.6 | sk-d58...3a67 | ❌ 关 | ### 技术细节 - **方案：** 多 Discord Bot（每个 agent 绑独立 Bot 账号），非频道路由 - **模型 Provider：** - `deepseek` (main + designer) → baseUrl: https://api.deepseek.com - `deepseek-dev`",
-      "recallCount": 11,
+      "recallCount": 12,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 9.314069315012844,
+      "totalScore": 9.946176210868465,
       "maxScore": 1,
       "firstRecalledAt": "2026-05-10T13:06:23.973Z",
-      "lastRecalledAt": "2026-05-16T01:12:08.592Z",
+      "lastRecalledAt": "2026-05-16T01:27:58.631Z",
       "queryHashes": [
         "124f2c52e930",
         "24291136ce06",
@@ -98,7 +98,8 @@
         "e7520d2b67a9",
         "7484c510f515",
         "e329e49f824d",
-        "b1eb9eb9a56f"
+        "b1eb9eb9a56f",
+        "f4f82e2949cb"
       ],
       "recallDays": [
         "2026-05-10",
@@ -124,13 +125,13 @@
       "endLine": 48,
       "source": "memory",
       "snippet": "- **Web Search：** 暂时未配 ### Discord 配对码（已全部批准） - main: WPJHDZ6V - designer: 4EGAZ2N2 - developer: 87MK58AD - reviewer: VF6NAJ26 - tester: 5YQEHZD5 ### 关键教训 1. **`openclaw gateway restart` 会中断当前回复** → 以后用 cron 延迟 10 秒重启避免断话 2. **`models.providers` 不可通过 patch 批量替换已有模型** → 安全机制拒删，用 Node 直写 JSON 3. **主 Bot account 配置时注意不覆盖** → 配子 agent 时覆盖了 main token，需单独补回 4. **KIMI 2.6 不稳定** → 用户要求换成 KIMI 2.5 5. **moonshot API Key 在清理模型时被误删** → 已恢复 ### 网络 - Clash Verge TUN 模式，端口 7897 - Node.js 不读 HTTP_PROXY，TUN 在系统层拦截流量 - proxy 配置在 `gateway.cmd` 中 ### 文件位置 - 配置：`C:\\Users\\jakkie\\.openclaw\\openclaw.json` - Agent config：`C:\\Users\\jakkie\\.openclaw\\agents\\{name}\\config.json` - 模型：`C:\\User",
-      "recallCount": 10,
+      "recallCount": 11,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 7.107408847747519,
+      "totalScore": 8.107408847747518,
       "maxScore": 1,
       "firstRecalledAt": "2026-05-10T13:06:23.973Z",
-      "lastRecalledAt": "2026-05-16T01:12:08.592Z",
+      "lastRecalledAt": "2026-05-16T01:27:58.631Z",
       "queryHashes": [
         "124f2c52e930",
         "24291136ce06",
@@ -141,7 +142,8 @@
         "dc3c761b610e",
         "e7520d2b67a9",
         "7484c510f515",
-        "b1eb9eb9a56f"
+        "b1eb9eb9a56f",
+        "f4f82e2949cb"
       ],
       "recallDays": [
         "2026-05-10",
@@ -275,31 +277,32 @@
       "startLine": 1,
       "endLine": 29,
       "source": "memory",
-      "snippet": "# 2026-05-16 周六 ## 酒量测试 App — 编译阻塞清零，准备上 Appetize.io ### 总管修复（编译阻塞） 1. DataStack enum→class (enum 不能存 `let container`) 2. DashboardView bacGaugeSection: 补 BACGaugeArc() shape + VStack 包裹 3. DashboardView NavigationLink 拼写 4. BACGauge 进度弧缺 Circle() 5. View init() 全量: DrinkLoggerView/SoberTestView/HistoryView/ProfileView 补 init()，SettingsView 用默认值 6. AlcoholToleranceApp.swift: 加 NavigationStack 包裹（否则 NavigationLink 不跳转），ModelContext→container.mainContext ### 🔍 reviewer 修复 7. **P0-1**: BACResult.level → `@Transient` 标记，SwiftData 不观察 computed property 8. **P1-1**: SettingsView 酒驾阈值: duiLimit→drinkDriveLimit，标签改 \"饮酒驾驶\"/\"醉酒驾驶\" 9. **P1-3**: User.title 重复调用缓存 ### 💻 developer 修复 10. 4 个 #Previe",
-      "recallCount": 3,
+      "snippet": "# 2026-05-16 周六 ## 酒量测试 App — 编译阻塞清零，CI 已触发 ### 🔧 总管修复（编译阻塞） 1. DataStack enum→class (enum 不能存 `let container`) 2. DashboardView bacGaugeSection: 补 BACGaugeArc() shape + VStack 包裹 3. DashboardView NavigationLink 拼写 4. BACGauge 进度弧缺 Circle() 5. View init() 全量: DrinkLoggerView/SoberTestView/HistoryView/ProfileView 补 init()，SettingsView 用默认值 6. AlcoholToleranceApp.swift: 加 NavigationStack 包裹（否则 NavigationLink 不跳转），ModelContext→container.mainContext ### 🔍 reviewer 修复 7. **P0-1**: BACResult.level → `@Transient` 标记 8. **P1-1**: SettingsView 酒驾阈值: duiLimit→drinkDriveLimit，标签改 \"饮酒驾驶\"/\"醉酒驾驶\" 9. **P1-3**: User.title 重复调用缓存 ### 💻 developer 修复 10. 4 个 #Preview 块: 自定义 init() 抑制 memberwise init → 无",
+      "recallCount": 4,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 3,
+      "totalScore": 4,
       "maxScore": 1,
       "firstRecalledAt": "2026-05-16T01:11:38.855Z",
-      "lastRecalledAt": "2026-05-16T01:12:08.592Z",
+      "lastRecalledAt": "2026-05-16T01:27:58.631Z",
       "queryHashes": [
         "d85d1619d110",
         "510f6de2351e",
-        "b1eb9eb9a56f"
+        "b1eb9eb9a56f",
+        "f4f82e2949cb"
       ],
       "recallDays": [
         "2026-05-16"
       ],
       "conceptTags": [
-        "appetize.io",
         "alcoholtoleranceapp.swift",
         "container.maincontext",
         "p0-1",
         "bacresult.level",
         "p1-1",
         "p1-3",
-        "user.title"
+        "user.title",
+        "周六"
       ]
     },
     "memory:memory/2026-03-22.md:32:57": {
@@ -309,15 +312,16 @@
       "endLine": 57,
       "source": "memory",
       "snippet": "- ✅ Doubao-Seedream-5.0-260128（文生图，0.22 元/张） - ✅ Doubao-Seedance-1.5-pro（视频生成） - 状态：✅ 可使用，图片保存到 `C:\\OPENCLAW_FILE\\` ## 🔍 Tavily Search API - 2026-03-22 18:43：配置 Tavily Search API - API Key: `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` - 用途：AI 优化的搜索引擎，用于实时信息查询（优先使用） - 额度：1000 次免费调用 - 状态：✅ 优先使用 ## 🔍 Kimi Search API - 2026-03-22 18:43：初始配置（旧 key 失效） - 2026-03-22 18:54：更新新 Key - API Key: `sk-Psyg98ePBjwjqUPyCnoy6Ki6E7WtW1kVjTlc1ntxotlCB55T` - 用途：国内网页搜索（当 Tavily 额度用完后启用） - 状态：✅ 已更新 ## 📋 搜索工具优先级规则 1. **Tavily Search** (优先，1000 次免费，国际/国内通用) 2. **Kimi Search** (Tavily 用完后启用，专注国内网页) - 每次搜索需注明使用的工具：🔍 [Search Tool: Tavily/Kimi] --- _最后更新：2026-03-22 17",
-      "recallCount": 1,
+      "recallCount": 2,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.633126819002779,
-      "maxScore": 0.633126819002779,
+      "totalScore": 1.2662536385910936,
+      "maxScore": 0.6331268195883147,
       "firstRecalledAt": "2026-05-16T01:12:08.592Z",
-      "lastRecalledAt": "2026-05-16T01:12:08.592Z",
+      "lastRecalledAt": "2026-05-16T01:27:58.631Z",
       "queryHashes": [
-        "b1eb9eb9a56f"
+        "b1eb9eb9a56f",
+        "f4f82e2949cb"
       ],
       "recallDays": [
         "2026-05-16"
@@ -340,15 +344,16 @@
       "endLine": 38,
       "source": "memory",
       "snippet": "# MEMORY.md ## 👤 关于主人（老板） - **称呼：** 老大 / boss / 主人 - **风格偏好：** 干练直接，带点小幽默 - **时区：** Asia/Shanghai - **当前项目：** 配置 OpenClaw + OpenViking 记忆系统 ## 🔧 技术配置 - **模型：** Qwen3.5-Plus (openrouter/qwen/qwen3.5-plus-02-15) - **OpenViking 配置：** - 使用 NVIDIA API - API Base: https://integrate.api.nvidia.com/v1 - Embedding: nvidia/nv-embed-v1 - VLM: meta/llama-3.3-70b-instruct - 数据存储：`C:\\Users\\jakkie\\.openclaw\\workspace\\openviking_data` ## 🎯 重要决定 - 2026-03-22：决定不用火山引擎，改用 NVIDIA API - 2026-03-22：决定 OpenViking 只记录对话记忆，不索引书籍 ## 📌 对话习惯 - 老板喜欢简洁、直接的交流 - 可以用 emoji（🔧 😎 🚀）增加趣味性 - 重要配置决定后会说\"搞定\"确认 ## 🎨 Doubao AI Skill 安装 - 2026-03-22 17:00：安装 Doubao AI Skill（文生图/视频） -",
-      "recallCount": 1,
+      "recallCount": 2,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.6318367333710512,
-      "maxScore": 0.6318367333710512,
+      "totalScore": 1.2636734673155514,
+      "maxScore": 0.6318367339445001,
       "firstRecalledAt": "2026-05-16T01:12:08.592Z",
-      "lastRecalledAt": "2026-05-16T01:12:08.592Z",
+      "lastRecalledAt": "2026-05-16T01:27:58.631Z",
       "queryHashes": [
-        "b1eb9eb9a56f"
+        "b1eb9eb9a56f",
+        "f4f82e2949cb"
       ],
       "recallDays": [
         "2026-05-16"
@@ -362,6 +367,37 @@
         "integrate.api.nvidia.com/v1",
         "nvidia/nv-embed-v1",
         "meta/llama-3.3-70b-instruct"
+      ]
+    },
+    "memory:memory/2026-05-16.md:24:38": {
+      "key": "memory:memory/2026-05-16.md:24:38",
+      "path": "memory/2026-05-16.md",
+      "startLine": 24,
+      "endLine": 38,
+      "source": "memory",
+      "snippet": "- 新增: ModelsTests, ServicesTests, IntegrationTests(10 端到端), ViewModelTests, PerformanceTests 12. 项目测试文件从 6→11，用例从 ~100→216 ### 🚀 CI & Appetize.io - GitHub CI: `AlcohocToleranceApp/.github/workflows/ios-ci.yml` - 流程: xcodegen → xcodebuild → 测试 → 打包 → Appetize 上传 → Discord 通知 - 需 GitHub Secret: `APPETIZE_API_TOKEN` - Repo: https://github.com/jakkierong11-tech/AlcoholToleranceApp - CI: https://github.com/jakkierong11-tech/AlcoholToleranceApp/actions ### ⚠️ 待办 - 🎨 designer 未响应（UI 审查尚未完成，非编译阻塞） - Appetize API token 需老板配置 - CI 构建结果待确认",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 1,
+      "maxScore": 1,
+      "firstRecalledAt": "2026-05-16T01:27:58.631Z",
+      "lastRecalledAt": "2026-05-16T01:27:58.631Z",
+      "queryHashes": [
+        "f4f82e2949cb"
+      ],
+      "recallDays": [
+        "2026-05-16"
+      ],
+      "conceptTags": [
+        "appetize.io",
+        "github/workflows/ios-ci.yml",
+        "appetize-api-token",
+        "新增",
+        "modelstests",
+        "servicestests",
+        "integrationtests",
+        "viewmodeltests"
       ]
     }
   }

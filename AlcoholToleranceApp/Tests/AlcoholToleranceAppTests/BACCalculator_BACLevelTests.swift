@@ -177,10 +177,10 @@ final class BACCalculator_BACLevelTests: XCTestCase {
         )
 
         // Then: s*0.5 + t*0.3 + e*0.2
-        //       e = min(30/50*100, 100) = 60
-        //       score = 60*0.5 + 70*0.3 + 60*0.2 = 30 + 21 + 12 = 63
-        let expectedE = min(Double(totalSessions) / 50 * 100, 100)
-        let expected = sessionAvg * 0.5 + testAvg * 0.3 + expectedE * 0.2
+        //       e = min(30/50*20, 20) = 12
+        //       score = 60*0.5 + 70*0.3 + 12 = 30 + 21 + 12 = 63
+        let expectedE = min(Double(totalSessions) / 50 * 20, 20)
+        let expected = sessionAvg * 0.5 + testAvg * 0.3 + expectedE
 
         XCTAssertEqual(score, expected, accuracy: 0.01, "ToleranceScore 计算不正确")
     }
@@ -203,10 +203,10 @@ final class BACCalculator_BACLevelTests: XCTestCase {
             totalSessions: 100
         )
 
-        // e = min(100/50*100, 100) = 100, e*0.2 = 20
-        let expectedE = 100.0
-        let expected = 50.0 * 0.5 + 50.0 * 0.3 + expectedE * 0.2
-        XCTAssertEqual(score, expected, accuracy: 0.01, "经验分加权后应被钳制在 20")
+        // e = min(100/50*20, 20) = 20
+        let expectedE = 20.0
+        let expected = 50.0 * 0.5 + 50.0 * 0.3 + expectedE
+        XCTAssertEqual(score, expected, accuracy: 0.01, "经验分应被钳制在 20")
     }
 
     // MARK: - 工具函数

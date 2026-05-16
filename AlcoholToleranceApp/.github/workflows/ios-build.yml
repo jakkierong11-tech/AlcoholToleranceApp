@@ -1,0 +1,56 @@
+name: iOS Build & Appetize
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Build for iOS Simulator
+        run: |
+          xcodebuild \
+            -scheme AlcoholToleranceApp \
+            -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2' \
+            -derivedDataPath DerivedData \
+            build
+
+      - name: Run Tests
+        run: |
+          xcodebuild \
+            -scheme AlcoholToleranceApp \
+            -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2' \
+            test
+
+      - name: Package for Appetize
+        run: |
+          mkdir -p Payload
+          cp -r DerivedData/Build/Products/Debug-iphonesimulator/AlcoholToleranceApp.app Payload/
+          zip -r AlcoholToleranceApp.zip Payload
+
+      - name: Upload to Appetize
+        env:
+          APPETIZE_TOKEN: ${{ secrets.APPETIZE_TOKEN }}
+        run: |
+          curl -H "Authorization: $APPETIZE_TOKEN" \
+               -F "file=@AlcoholToleranceApp.zip" \
+               -F "platform=ios" \
+               https://api.appetize.io/v1/apps
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AlcoholToleranceApp-simulator
+          path: AlcoholToleranceApp.zip
