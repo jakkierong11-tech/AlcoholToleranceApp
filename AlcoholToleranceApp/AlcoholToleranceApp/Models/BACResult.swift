@@ -32,8 +32,8 @@ final class BACResult {
     /// 身体反应描述
     var physicalEffects: String
 
-    /// BAC 等级枚举 — @Transient 明确告知 SwiftData 不观察/不持久化
-    @Transient var level: BACLevel {
+    /// BAC 等级枚举 — 通过 levelRaw 持久化
+    var level: BACLevel {
         get { BACLevel(rawValue: levelRaw) ?? .sober }
         set { levelRaw = newValue.rawValue }
     }
