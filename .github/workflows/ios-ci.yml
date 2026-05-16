@@ -53,6 +53,7 @@ for runtime, devices in data.get('devices',{}).items():
             -scheme AlcoholToleranceApp \
             -destination "id=$SIM_UDID" \
             -configuration Debug \
+            ENABLE_DEBUG_DYLIB=NO \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
             2>&1 | tee test.log | tail -5
         shell: bash
