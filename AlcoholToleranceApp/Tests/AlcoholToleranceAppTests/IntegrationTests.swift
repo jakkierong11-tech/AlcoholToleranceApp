@@ -1,4 +1,5 @@
 import XCTest
+import SwiftData
 @testable import AlcoholToleranceApp
 
 // MARK: - 端到端场景测试

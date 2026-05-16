@@ -1,4 +1,5 @@
 import XCTest
+import SwiftData
 @testable import AlcoholToleranceApp
 
 // MARK: - BACCalculator 性能测试
