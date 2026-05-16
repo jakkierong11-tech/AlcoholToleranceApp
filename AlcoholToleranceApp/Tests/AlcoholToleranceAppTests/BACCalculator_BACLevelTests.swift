@@ -119,7 +119,7 @@ final class BACCalculator_BACLevelTests: XCTestCase {
         // BAC 0.06 > drinkDriveLimit → 🚫 酒驾
         XCTAssertTrue(sut.drivingAdvice(bac: 0.06).contains("酒驾标准"))
         // BAC 0.10 ≥ duiLimit(0.08) → 🚨 醉驾
-        XCTAssertTrue(sut.drivingAdvice(bac: 0.10).contains("醉驾")))
+        XCTAssertTrue(sut.drivingAdvice(bac: 0.10).contains("醉驾"))
     }
 
     // MARK: - 评分函数
