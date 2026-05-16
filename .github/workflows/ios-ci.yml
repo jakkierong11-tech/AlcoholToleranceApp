@@ -29,6 +29,8 @@ jobs:
 
       - name: 编译 & 测试
         run: |
+          xcrun simctl boot 'iPad (10th generation)' || true
+          sleep 5
           cd AlcoholToleranceApp
           xcodebuild test \
             -project AlcoholToleranceApp.xcodeproj \
@@ -37,6 +39,7 @@ jobs:
             -configuration Debug \
             -resultBundlePath ../test-results.xcresult \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+          xcrun simctl shutdown 'iPad (10th generation)' || true
 
       - name: 打包并上传 Appetize.io
         env:
