@@ -88,7 +88,7 @@ final class HistoryVM: ObservableObject {
     func deleteSession(at index: Int) {
         guard index < completedSessions.count else { return }
         let session = completedSessions[index]
-        sessionManager.deleteSession(session)
+        try? sessionManager.deleteSession(session)
         completedSessions.remove(at: index)
     }
 

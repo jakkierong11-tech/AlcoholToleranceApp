@@ -70,7 +70,7 @@ final class DrinkSessionManager {
             id: UUID(),
             session: session,
             drinkType: drinkType,
-            volumeML: volumeML,
+            volumeMl: volumeML,
             abv: effectiveAbv,
             drankAt: drankAt
         )
