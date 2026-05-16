@@ -7,6 +7,10 @@ import SwiftUI
 struct SoberTestView: View {
     @ObservedObject var vm: SoberTestVM
 
+    init() {
+        _vm = ObservedObject(wrappedValue: SoberTestVM(modelContext: DataStack.shared.container.mainContext))
+    }
+
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 20) {
@@ -534,12 +538,6 @@ struct MemoryTestView: View {
 // MARK: - Preview
 
 #Preview("SoberTest") {
-    let container = try! ModelContainer(
-        for: User.self, DrinkSession.self, DrinkRecord.self, BACResult.self
-    )
-    let context = container.mainContext
-    let vm = SoberTestVM(modelContext: context)
-    SoberTestView(vm: vm)
-        .modelContainer(container)
+    SoberTestView()
         .preferredColorScheme(.dark)
 }

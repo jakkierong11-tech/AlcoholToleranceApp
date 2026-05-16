@@ -54,47 +54,48 @@ struct DashboardView: View {
 
     /// BAC 仪表盘弧线区域
     private var bacGaugeSection: some View {
-        VStack(spacing: 0) {
-            ZStack {
+        ZStack {
             // 背景轨道（半透明）
-                    .stroke(Color.white.opacity(0.08), lineWidth: 24)
+            BACGaugeArc()
+                .stroke(Color.white.opacity(0.08), lineWidth: 24)
 
             // BAC 进度弧（渐变色 + 阴影）
-                    .stroke(
-                        AngularGradient(
-                            gradient: Gradient(colors: bacGradientColors),
-                            center: .center,
-                            startAngle: .degrees(-135),
-                            endAngle: .degrees(135)
-                        ),
-                        style: StrokeStyle(lineWidth: 24, lineCap: .round, lineJoin: .round)
-                    )
-                    .shadow(color: currentBACColor.opacity(0.6), radius: 12, x: 0, y: 0)
+            BACGaugeArc(progress: bacGaugeProgress)
+                .stroke(
+                    AngularGradient(
+                        gradient: Gradient(colors: bacGradientColors),
+                        center: .center,
+                        startAngle: .degrees(-135),
+                        endAngle: .degrees(135)
+                    ),
+                    style: StrokeStyle(lineWidth: 24, lineCap: .round, lineJoin: .round)
+                )
+                .shadow(color: currentBACColor.opacity(0.6), radius: 12, x: 0, y: 0)
 
-                // 内圈刻度
-                BACGaugeArc()
-                    .stroke(Color.white.opacity(0.05), lineWidth: 2)
-                    .scaleEffect(0.82)
+            // 内圈刻度
+            BACGaugeArc()
+                .stroke(Color.white.opacity(0.05), lineWidth: 2)
+                .scaleEffect(0.82)
 
             // 圆心信息（emoji + 数值 + 等级）
-                    Text(vm.bacLevel.emoji)
-                        .font(.system(size: 40))
-                    Text(BACCalculator.formatBAC(vm.currentBAC, style: .mgPer100mL))
-                        .font(.system(size: 28, weight: .bold, design: .monospaced))
-                        .foregroundColor(currentBACColor)
-                    Text(vm.bacLevel.rawValue)
-                        .font(.headline)
-                        .foregroundColor(NeonColors.textSecondary)
-                }
-                .offset(y: -8)
-
-                // 刻度标记
-                BACGaugeTickMarks()
-                    .stroke(Color.white.opacity(0.12), lineWidth: 1)
+            VStack(spacing: 2) {
+                Text(vm.bacLevel.emoji)
+                    .font(.system(size: 40))
+                Text(BACCalculator.formatBAC(vm.currentBAC, style: .mgPer100mL))
+                    .font(.system(size: 28, weight: .bold, design: .monospaced))
+                    .foregroundColor(currentBACColor)
+                Text(vm.bacLevel.rawValue)
+                    .font(.headline)
+                    .foregroundColor(NeonColors.textSecondary)
             }
-            .frame(height: 220)
-            .padding(.top, 20)
+            .offset(y: -8)
+
+            // 刻度标记
+            BACGaugeTickMarks()
+                .stroke(Color.white.opacity(0.12), lineWidth: 1)
         }
+        .frame(height: 220)
+        .padding(.top, 20)
         .neonCard()
         .padding(.horizontal, 4)
     }

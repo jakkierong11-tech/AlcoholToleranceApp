@@ -66,6 +66,43 @@ jobs:
             CODE_SIGNING_REQUIRED=NO
         continue-on-error: true
 
+      - name: 打包 & 上传 Appetize.io
+        id: appetize
+        if: steps.test.outcome == 'success'
+        env:
+          APPETIZE_TOKEN: ${{ secrets.APPETIZE_API_TOKEN }}
+        run: |
+          if [ -z "$APPETIZE_TOKEN" ]; then
+            echo "⚠️ APPTIZE_API_TOKEN 未配置，跳过上传"
+            echo "SKIP=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          APP_PATH=$(find ~/Library/Developer/Xcode/DerivedData/AlcoholToleranceApp-*/Build/Products/Debug-iphonesimulator -name 'AlcoholToleranceApp.app' -type d | head -1)
+          if [ -z "$APP_PATH" ]; then
+            echo "❌ 找不到 .app，尝试全路径搜索..."
+            APP_PATH=$(find /tmp -name 'AlcoholToleranceApp.app' -type d 2>/dev/null | head -1)
+          fi
+          echo "📦 App 路径: $APP_PATH"
+          cd "$(dirname "$APP_PATH")"
+          zip -r /tmp/AppetizeUpload.zip "$(basename "$APP_PATH")"
+          echo "📤 上传到 Appetize.io..."
+          RESPONSE=$(curl -s -X POST https://api.appetize.io/v1/apps \
+            -H "Authorization: token $APPETIZE_TOKEN" \
+            -F "file=@/tmp/AppetizeUpload.zip" \
+            -F "platform=ios" \
+            -F "timeout=300")
+          echo "$RESPONSE" > /tmp/appetize.json
+          PUBLIC_KEY=$(echo "$RESPONSE" | python3 -c "import json,sys; print(json.load(sys.stdin).get('publicKey',''))" 2>/dev/null)
+          if [ -n "$PUBLIC_KEY" ]; then
+            APP_URL="https://appetize.io/app/$PUBLIC_KEY"
+            echo "✅ Appetize.io: $APP_URL"
+            echo "URL=$APP_URL" >> $GITHUB_OUTPUT
+            echo "SKIP=false" >> $GITHUB_OUTPUT
+          else
+            echo "⚠️ 上传可能失败，检查 token"
+            echo "SKIP=true" >> $GITHUB_OUTPUT
+          fi
+
       - name: 通知 Discord
         if: always()
         env:
@@ -73,6 +110,8 @@ jobs:
         run: |
           BUILD_OUTCOME="${{ steps.build.outcome }}"
           TEST_OUTCOME="${{ steps.test.outcome }}"
+          APPETIZE_URL="${{ steps.appetize.outputs.URL }}"
+          APPETIZE_SKIP="${{ steps.appetize.outputs.SKIP }}"
           RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
           if [ "$BUILD_OUTCOME" = "success" ] && [ "$TEST_OUTCOME" = "success" ]; then
@@ -80,11 +119,17 @@ jobs:
             COLOR=65280
             BUILD_LINE="✅ 编译通过"
             TEST_LINE="✅ 测试通过"
+            if [ "$APPETIZE_SKIP" != "true" ] && [ -n "$APPETIZE_URL" ]; then
+              APP_LINE="[🎮 打开模拟器]($APPETIZE_URL)"
+            else
+              APP_LINE="⏭️ 未上传"
+            fi
           else
             TITLE="❌ CI 失败 — AlcoholToleranceApp"
             COLOR=16711680
             BUILD_LINE="$([ "$BUILD_OUTCOME" = "success" ] && echo '✅ 编译通过' || echo '❌ 编译失败')"
             TEST_LINE="$([ "$TEST_OUTCOME" = "success" ] && echo '✅ 测试通过' || [ "$TEST_OUTCOME" = "skipped" ] && echo '⏭️ 跳过' || echo '❌ 测试失败')"
+            APP_LINE="⏭️ 跳过"
           fi
 
           PAYLOAD=$(cat <<EOF
@@ -95,6 +140,7 @@ jobs:
               "fields": [
                 {"name": "📦 编译", "value": "$BUILD_LINE", "inline": true},
                 {"name": "🧪 测试", "value": "$TEST_LINE", "inline": true},
+                {"name": "📱 Appetize", "value": "$APP_LINE", "inline": true},
                 {"name": "🔗 详情", "value": "[查看 Actions]($RUN_URL)"}
               ],
               "footer": {"text": "${{ github.sha }}"}

@@ -8,6 +8,10 @@ import SwiftUI
 struct HistoryView: View {
     @ObservedObject var vm: HistoryVM
 
+    init() {
+        _vm = ObservedObject(wrappedValue: HistoryVM(modelContext: DataStack.shared.container.mainContext))
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             filterBar
@@ -187,25 +191,8 @@ struct SessionRow: View {
 // MARK: - Preview
 
 #Preview("History") {
-    let container = try! ModelContainer(
-        for: User.self, DrinkSession.self, DrinkRecord.self, BACResult.self
-    )
-    let context = container.mainContext
-    let vm = HistoryVM(modelContext: context)
-
-    // 添加示例数据
-    let user = UserManager(modelContext: context).fetchOrCreateUser()
-    vm.setUser(user)
-    let sessionManager = DrinkSessionManager(modelContext: context)
-    let session = sessionManager.startSession(user: user)
-    try? sessionManager.addDrink(to: session, type: .beer, volumeML: 500)
-    try? sessionManager.addDrink(to: session, type: .wine, volumeML: 200)
-    try? sessionManager.endSession(session)
-    vm.loadAll()
-
-    return NavigationStack {
-        HistoryView(vm: vm)
-            .modelContainer(container)
+    NavigationStack {
+        HistoryView()
             .preferredColorScheme(.dark)
     }
 }

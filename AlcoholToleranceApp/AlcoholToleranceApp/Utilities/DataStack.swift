@@ -4,7 +4,8 @@ import SwiftData
 // MARK: - SwiftData 共享容器
 
 /// 单例共享容器，App 启动时创建，包含所有 Model 类型
-enum DataStack {
+@MainActor
+final class DataStack: @unchecked Sendable {
     static let shared = DataStack()
 
     let container: ModelContainer

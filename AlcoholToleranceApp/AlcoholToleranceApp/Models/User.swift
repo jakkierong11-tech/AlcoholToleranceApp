@@ -38,7 +38,8 @@ final class User {
 
     /// 酒量称号（委托 UserManager 统一区间映射）
     var title: String {
-        UserManager.getUserTitle(for: highestScore).emoji + " " + UserManager.getUserTitle(for: highestScore).name
+        let t = UserManager.getUserTitle(for: highestScore)
+        return t.emoji + " " + t.name
     }
 
     init(

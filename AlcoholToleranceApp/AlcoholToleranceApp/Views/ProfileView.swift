@@ -7,6 +7,10 @@ import SwiftUI
 struct ProfileView: View {
     @ObservedObject var vm: ProfileVM
 
+    init() {
+        _vm = ObservedObject(wrappedValue: ProfileVM(modelContext: DataStack.shared.container.mainContext))
+    }
+
     @State private var showEditSheet = false
     @State private var showResetAlert = false
 
@@ -317,23 +321,8 @@ struct ProfileEditView: View {
 // MARK: - Preview
 
 #Preview("Profile") {
-    let container = try! ModelContainer(
-        for: User.self, DrinkSession.self, DrinkRecord.self, BACResult.self
-    )
-    let context = container.mainContext
-    let userManager = UserManager(modelContext: context)
-    let vm = ProfileVM(userManager: userManager)
-
-    // 设置示例数据
-    let user = userManager.fetchOrCreateUser()
-    user.highestScore = 42
-    user.totalTests = 15
-    try? userManager.updateProfile(user: user)
-    vm.loadProfile()
-
-    return NavigationStack {
-        ProfileView(vm: vm)
-            .modelContainer(container)
+    NavigationStack {
+        ProfileView()
             .preferredColorScheme(.dark)
     }
 }

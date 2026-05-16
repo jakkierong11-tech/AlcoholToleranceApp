@@ -5,7 +5,7 @@ import SwiftUI
 // ============================================================
 
 struct SettingsView: View {
-    @ObservedObject var vm: SettingsVM
+    @ObservedObject var vm = SettingsVM()
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -69,8 +69,8 @@ struct SettingsView: View {
             // 当前区域法定阈值
             VStack(alignment: .leading, spacing: 8) {
                 legalLimitRow(
-                    label: "酒后驾驶 (DUI)",
-                    limit: vm.region.duiLimit,
+                    label: "饮酒驾驶",
+                    limit: vm.region.drinkDriveLimit,
                     color: NeonColors.amber
                 )
                 legalLimitRow(

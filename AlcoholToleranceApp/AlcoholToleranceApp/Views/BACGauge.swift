@@ -77,6 +77,7 @@ struct BACGauge: View {
                 .frame(width: size, height: size)
 
             // BAC 进度弧（渐变色）
+            Circle()
                 .trim(from: 0, to: trimEnd)
                 .stroke(
                     AngularGradient(

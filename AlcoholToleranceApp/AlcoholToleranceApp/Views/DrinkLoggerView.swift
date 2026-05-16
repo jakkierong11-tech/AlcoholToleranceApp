@@ -7,6 +7,10 @@ import SwiftUI
 struct DrinkLoggerView: View {
     @ObservedObject var vm: DrinkLoggerVM
 
+    init() {
+        _vm = ObservedObject(wrappedValue: DrinkLoggerVM(modelContext: DataStack.shared.container.mainContext))
+    }
+
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 20) {
@@ -293,12 +297,6 @@ struct DrinkLoggerView: View {
 // MARK: - Preview
 
 #Preview("DrinkLogger") {
-    let container = try! ModelContainer(
-        for: User.self, DrinkSession.self, DrinkRecord.self, BACResult.self
-    )
-    let context = container.mainContext
-    let vm = DrinkLoggerVM(modelContext: context)
-    DrinkLoggerView(vm: vm)
-        .modelContainer(container)
+    DrinkLoggerView()
         .preferredColorScheme(.dark)
 }
