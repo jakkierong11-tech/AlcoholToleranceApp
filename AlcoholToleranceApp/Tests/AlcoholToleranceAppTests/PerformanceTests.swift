@@ -7,7 +7,7 @@ import SwiftData
 /// BACCalculator 性能基准测试
 final class BACCalculatorPerformanceTests: XCTestCase {
 
-    // MARK: - 峰值 BAC 计算性能
+    // MARK: - 峰�?BAC 计算性能
 
     func test_calculatePeakBAC_performance() {
         measure {
@@ -169,7 +169,7 @@ final class MemoryPressureTests: XCTestCase {
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
         do {
             modelContainer = try ModelContainer(for: schema, configurations: [config])
-            modelContext = ModelContext(modelContainer)
+            modelContext = modelContainer.mainContext
         } catch {
             XCTFail("创建内存 ModelContainer 失败: \(error)")
         }

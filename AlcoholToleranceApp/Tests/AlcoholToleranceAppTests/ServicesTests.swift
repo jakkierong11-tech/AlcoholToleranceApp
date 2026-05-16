@@ -4,7 +4,7 @@ import SwiftData
 
 // MARK: - UserManager Tests
 
-/// UserManager 服务测试 — 需要 SwiftData 上下文，使用内存存储
+/// UserManager 服务测试 �?需�?SwiftData 上下文，使用内存存储
 @MainActor
 final class UserManagerTests: XCTestCase {
 
@@ -14,12 +14,12 @@ final class UserManagerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        // 使用内存存储的 SwiftData 容器
+        // 使用内存存储�?SwiftData 容器
         let schema = Schema([User.self, DrinkSession.self, DrinkRecord.self, BACResult.self])
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
         do {
             modelContainer = try ModelContainer(for: schema, configurations: [config])
-            modelContext = ModelContext(modelContainer)
+            modelContext = modelContainer.mainContext
             sut = UserManager(modelContext: modelContext)
         } catch {
             XCTFail("创建内存 ModelContainer 失败: \(error)")
@@ -120,10 +120,10 @@ final class UserManagerTests: XCTestCase {
     }
 
     func test_fetchUserById() throws {
-        let user = try sut.createUser(nickname: "按ID查")
+        let user = try sut.createUser(nickname: "按ID�?)
         let fetched = sut.fetchUser(by: user.id)
         XCTAssertNotNil(fetched)
-        XCTAssertEqual(fetched?.nickname, "按ID查")
+        XCTAssertEqual(fetched?.nickname, "按ID�?)
     }
 
     func test_fetchUserById_notFound_returnsNil() {
@@ -131,8 +131,7 @@ final class UserManagerTests: XCTestCase {
     }
 
     func test_fetchAllUsers() throws {
-        // 单用户模式下只能创建一个
-        _ = try sut.createUser(nickname: "唯一用户")
+        // 单用户模式下只能创建一�?        _ = try sut.createUser(nickname: "唯一用户")
         let all = sut.fetchAllUsers()
         XCTAssertEqual(all.count, 1)
     }
@@ -230,9 +229,9 @@ final class UserManagerTests: XCTestCase {
 
     func test_getUserTitle_allRanges() {
         let testCases: [(score: Double, expectedName: String)] = [
-            (-10, "新手村"),
-            (0, "新手村"),
-            (10, "新手村"),
+            (-10, "新手�?),
+            (0, "新手�?),
+            (10, "新手�?),
             (20, "入门选手"),
             (30, "入门选手"),
             (40, "酒场熟客"),
@@ -248,7 +247,7 @@ final class UserManagerTests: XCTestCase {
         for tc in testCases {
             let title = UserManager.getUserTitle(for: tc.score)
             XCTAssertEqual(title.name, tc.expectedName,
-                "分数 \(tc.score) 应映射到 \(tc.expectedName)，实际: \(title.name)")
+                "分数 \(tc.score) 应映射到 \(tc.expectedName)，实�? \(title.name)")
         }
     }
 
@@ -271,20 +270,20 @@ final class UserManagerTests: XCTestCase {
         let stats = sut.getStats(for: user)
         XCTAssertEqual(stats.nickname, "统计测试")
         XCTAssertEqual(stats.weightKg, 80)
-        XCTAssertEqual(stats.genderLabel, "女")
+        XCTAssertEqual(stats.genderLabel, "�?)
         XCTAssertEqual(stats.highestScore, 85)
         XCTAssertEqual(stats.totalTests, 1)
         XCTAssertTrue(stats.title.contains("酒神降临"))
         XCTAssertNotNil(stats.titleDetail)
         XCTAssertEqual(stats.formattedWeight, "80.0 kg")
         XCTAssertEqual(stats.formattedScore, "85 / 100")
-        XCTAssertEqual(stats.improvementRate, "1 次测试")
+        XCTAssertEqual(stats.improvementRate, "1 次测�?)
     }
 
     // MARK: - 删除用户
 
     func test_deleteUser() throws {
-        let user = try sut.createUser(nickname: "待删除")
+        let user = try sut.createUser(nickname: "待删�?)
         try sut.deleteUser(user)
         XCTAssertNil(sut.fetchCurrentUser())
     }
@@ -292,7 +291,7 @@ final class UserManagerTests: XCTestCase {
 
 // MARK: - DrinkSessionManager Tests
 
-/// DrinkSessionManager 服务测试 — 验证会话生命周期
+/// DrinkSessionManager 服务测试 �?验证会话生命周期
 @MainActor
 final class DrinkSessionManagerTests: XCTestCase {
 
@@ -308,7 +307,7 @@ final class DrinkSessionManagerTests: XCTestCase {
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
         do {
             modelContainer = try ModelContainer(for: schema, configurations: [config])
-            modelContext = ModelContext(modelContainer)
+            modelContext = modelContainer.mainContext
             userManager = UserManager(modelContext: modelContext)
             sut = DrinkSessionManager(modelContext: modelContext)
             testUser = userManager.fetchOrCreateUser()
@@ -496,7 +495,7 @@ final class DrinkSessionManagerTests: XCTestCase {
     }
 
     func test_endSession_invalidWeight_throws() throws {
-        let badUser = try userManager.createUser(nickname: "轻用户", weightKg: 0.1)
+        let badUser = try userManager.createUser(nickname: "轻用�?, weightKg: 0.1)
         let session = sut.startSession(user: badUser)
         try sut.addDrink(to: session, type: .beer, volumeML: 500)
         XCTAssertThrowsError(try sut.endSession(session)) { error in
@@ -608,13 +607,13 @@ final class DrinkSessionManagerTests: XCTestCase {
         try? sut.addDrink(to: session, type: .beer, volumeML: 500)
 
         let summary = sut.generateSummary(for: session)
-        XCTAssertTrue(summary.contains("未完成") || summary.contains("进行中"))
+        XCTAssertTrue(summary.contains("未完�?) || summary.contains("进行�?))
     }
 
     func test_generateSummary_empty() {
         let session = sut.startSession(user: testUser)
         let summary = sut.generateSummary(for: session)
-        XCTAssertTrue(summary.contains("未完成") || summary.contains("进行中"))
+        XCTAssertTrue(summary.contains("未完�?) || summary.contains("进行�?))
     }
 }
 
@@ -647,13 +646,13 @@ final class BACCalculator_RegionTests: XCTestCase {
     func test_getSafeDrinkingGuideline_male() {
         let guideline = BACCalculator.getSafeDrinkingGuideline(isMale: true)
         XCTAssertEqual(guideline.maxUnits, 4.0)
-        XCTAssertTrue(guideline.advice.contains("男性"))
+        XCTAssertTrue(guideline.advice.contains("男�?))
     }
 
     func test_getSafeDrinkingGuideline_female() {
         let guideline = BACCalculator.getSafeDrinkingGuideline(isMale: false)
         XCTAssertEqual(guideline.maxUnits, 2.5)
-        XCTAssertTrue(guideline.advice.contains("女性"))
+        XCTAssertTrue(guideline.advice.contains("女�?))
     }
 
     func test_calculateStandardDrinks_beer() {
@@ -674,8 +673,7 @@ final class BACCalculator_RegionTests: XCTestCase {
 
     func test_estimatedSoberDate_zeroBAC_now() {
         let date = BACCalculator.estimatedSoberDate(currentBAC: 0.0)
-        // 应该接近当前时间（允许小误差）
-        XCTAssertLessThan(date.timeIntervalSinceNow, 1)
+        // 应该接近当前时间（允许小误差�?        XCTAssertLessThan(date.timeIntervalSinceNow, 1)
     }
 }
 

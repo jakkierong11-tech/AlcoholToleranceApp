@@ -2,9 +2,8 @@ import XCTest
 import SwiftData
 @testable import AlcoholToleranceApp
 
-// MARK: - 端到端场景测试
-
-/// 完整用户旅程测试 — 从创建用户到结算会话的全流程
+// MARK: - 端到端场景测�?
+/// 完整用户旅程测试 �?从创建用户到结算会话的全流程
 @MainActor
 final class IntegrationTests: XCTestCase {
 
@@ -19,7 +18,7 @@ final class IntegrationTests: XCTestCase {
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
         do {
             modelContainer = try ModelContainer(for: schema, configurations: [config])
-            modelContext = ModelContext(modelContainer)
+            modelContext = modelContainer.mainContext
             userManager = UserManager(modelContext: modelContext)
             sessionManager = DrinkSessionManager(modelContext: modelContext)
         } catch {
@@ -38,20 +37,18 @@ final class IntegrationTests: XCTestCase {
     // MARK: - 场景 1: 标准男性喝啤酒
 
     func test_scenario_standardMaleBeer() throws {
-        // Given: 70kg 男性用户
-        let user = try userManager.createUser(
-            nickname: "啤酒爱好者",
+        // Given: 70kg 男性用�?        let user = try userManager.createUser(
+            nickname: "啤酒爱好�?,
             weightKg: 70,
             isMale: true,
             birthYear: 1990
         )
 
-        // When: 开始会话，喝 2 瓶啤酒
-        let session = sessionManager.startSession(user: user)
+        // When: 开始会话，�?2 瓶啤�?        let session = sessionManager.startSession(user: user)
         try sessionManager.addDrink(to: session, type: .beer, volumeML: 500)
         try sessionManager.addDrink(to: session, type: .beer, volumeML: 500)
 
-        // Then: 实时 BAC 应大于 0
+        // Then: 实时 BAC 应大�?0
         let liveBAC = sessionManager.calculateLiveBAC(for: session)
         XCTAssertNotNil(liveBAC)
         XCTAssertGreaterThan(liveBAC!, 0.05)
@@ -66,33 +63,30 @@ final class IntegrationTests: XCTestCase {
         XCTAssertEqual(result.level, BACCalculator.getBACLevel(bacPercent: result.bacPercent).bacLevel)
 
         // Then: 用户数据更新
-        XCTAssertEqual(user.totalTests, 0) // endSession 不更新 totalTests
+        XCTAssertEqual(user.totalTests, 0) // endSession 不更�?totalTests
         XCTAssertGreaterThanOrEqual(user.highestScore, 0)
     }
 
-    // MARK: - 场景 2: 轻体重女性喝白酒（高风险）
-
+    // MARK: - 场景 2: 轻体重女性喝白酒（高风险�?
     func test_scenario_lightFemaleBaijiu_highRisk() throws {
-        // Given: 45kg 女性
-        let user = try userManager.createUser(
-            nickname: "小酒量",
+        // Given: 45kg 女�?        let user = try userManager.createUser(
+            nickname: "小酒�?,
             weightKg: 45,
             isMale: false,
             birthYear: 1995
         )
 
-        // When: 喝 100ml 白酒
+        // When: �?100ml 白酒
         let session = sessionManager.startSession(user: user)
         try sessionManager.addDrink(to: session, type: .baijiu, volumeML: 100)
 
         // Then: 结束会话
         let result = try sessionManager.endSession(session)
 
-        // Then: 应超过中国酒驾标准
-        XCTAssertGreaterThan(result.bacPercent, 0.02)
+        // Then: 应超过中国酒驾标�?        XCTAssertGreaterThan(result.bacPercent, 0.02)
         XCTAssertTrue(result.legalDrivingStatus.contains("禁止") || result.legalDrivingStatus.contains("严禁"))
 
-        // Then: 等级至少为 euphoric
+        // Then: 等级至少�?euphoric
         XCTAssertGreaterThanOrEqual(result.level.levelNumber, BACLevel.euphoric.levelNumber)
     }
 
@@ -114,12 +108,10 @@ final class IntegrationTests: XCTestCase {
         let result = try sessionManager.endSession(session)
 
         // 总酒精量应大于单种酒
-        XCTAssertGreaterThan(result.totalAlcoholGrams, 19.725) // 仅一瓶啤酒的量
-        XCTAssertEqual(session.drinkRecords.count, 3)
+        XCTAssertGreaterThan(result.totalAlcoholGrams, 19.725) // 仅一瓶啤酒的�?        XCTAssertEqual(session.drinkRecords.count, 3)
     }
 
-    // MARK: - 场景 4: 空腹 + 碳酸饮料加速吸收
-
+    // MARK: - 场景 4: 空腹 + 碳酸饮料加速吸�?
     func test_scenario_emptyStomachCarbonated() throws {
         let user = try userManager.createUser(
             nickname: "空腹勇士",
@@ -140,26 +132,23 @@ final class IntegrationTests: XCTestCase {
         XCTAssertGreaterThan(result.toleranceScore, 0)
     }
 
-    // MARK: - 场景 5: 多会话历史
-
+    // MARK: - 场景 5: 多会话历�?
     func test_scenario_multipleSessions_history() throws {
         let user = try userManager.createUser(
-            nickname: "老酒鬼",
+            nickname: "老酒�?,
             weightKg: 75,
             isMale: true,
             birthYear: 1985
         )
 
-        // 第一次会话
-        let session1 = sessionManager.startSession(user: user)
+        // 第一次会�?        let session1 = sessionManager.startSession(user: user)
         try sessionManager.addDrink(to: session1, type: .beer, volumeML: 500)
         let result1 = try sessionManager.endSession(session1)
 
         // 更新分数
         _ = userManager.updateUserScore(user: user, newScore: result1.toleranceScore)
 
-        // 第二次会话
-        let session2 = sessionManager.startSession(user: user)
+        // 第二次会�?        let session2 = sessionManager.startSession(user: user)
         try sessionManager.addDrink(to: session2, type: .beer, volumeML: 500)
         try sessionManager.addDrink(to: session2, type: .beer, volumeML: 500)
         let result2 = try sessionManager.endSession(session2)
@@ -177,11 +166,10 @@ final class IntegrationTests: XCTestCase {
         XCTAssertFalse(stats.title.isEmpty)
     }
 
-    // MARK: - 场景 6: 删除饮品后重新结算
-
+    // MARK: - 场景 6: 删除饮品后重新结�?
     func test_scenario_removeDrinkRecalculate() throws {
         let user = try userManager.createUser(
-            nickname: "反悔者",
+            nickname: "反悔�?,
             weightKg: 70,
             isMale: true,
             birthYear: 1990
@@ -197,8 +185,8 @@ final class IntegrationTests: XCTestCase {
 
         // 重新结算
         let result = try sessionManager.endSession(session)
-        // 只有啤酒的 BAC
-        let expectedBeerBAC = BACCalculator.calculateBAC(
+        // 只有啤酒�?BAC
+        let expectedBeerBAC = BACCalculator.calculatePeakBAC(
             weightKg: 70, isMale: true,
             volumeML: 500, alcoholPercent: 5
         )
@@ -214,7 +202,7 @@ final class IntegrationTests: XCTestCase {
         let usAdvice = LegalRegion.us.drivingAdvice(for: bac)
         let euAdvice = LegalRegion.eu.drivingAdvice(for: bac)
 
-        // 中国: 0.06 > 0.02 酒驾标准，< 0.08 醉驾标准
+        // 中国: 0.06 > 0.02 酒驾标准�? 0.08 醉驾标准
         XCTAssertTrue(cnAdvice.contains("酒驾") || cnAdvice.contains("禁止"))
 
         // 美国: 0.06 < 0.08 酒驾标准
@@ -229,8 +217,8 @@ final class IntegrationTests: XCTestCase {
     func test_scenario_extremeWeights() throws {
         // 极轻体重
         let lightUser = try userManager.createUser(
-            nickname: "轻量级",
-            weightKg: 10, // 会被 clamp 到 10
+            nickname: "轻量�?,
+            weightKg: 10, // 会被 clamp �?10
             isMale: true,
             birthYear: 2000
         )
@@ -239,13 +227,13 @@ final class IntegrationTests: XCTestCase {
         let session1 = sessionManager.startSession(user: lightUser)
         try sessionManager.addDrink(to: session1, type: .beer, volumeML: 500)
         let result1 = try sessionManager.endSession(session1)
-        // 极轻体重下 BAC 应该很高
+        // 极轻体重�?BAC 应该很高
         XCTAssertGreaterThan(result1.bacPercent, 0.1)
 
         // 极重体重
         let heavyUser = try userManager.createUser(
-            nickname: "重量级",
-            weightKg: 300, // 会被 clamp 到 300
+            nickname: "重量�?,
+            weightKg: 300, // 会被 clamp �?300
             isMale: true,
             birthYear: 1980
         )
@@ -254,7 +242,7 @@ final class IntegrationTests: XCTestCase {
         let session2 = sessionManager.startSession(user: heavyUser)
         try sessionManager.addDrink(to: session2, type: .beer, volumeML: 500)
         let result2 = try sessionManager.endSession(session2)
-        // 极重体重下 BAC 应该很低
+        // 极重体重�?BAC 应该很低
         XCTAssertLessThan(result2.bacPercent, result1.bacPercent)
     }
 
@@ -294,17 +282,14 @@ final class IntegrationTests: XCTestCase {
         let session1 = sessionManager.startSession(user: user)
         let session2 = sessionManager.startSession(user: user)
 
-        // 两个都应该是活跃的
-        let active = sessionManager.fetchActiveSession(for: user)
+        // 两个都应该是活跃�?        let active = sessionManager.fetchActiveSession(for: user)
         // 取最新的那个
         XCTAssertNotNil(active)
 
-        // 结束第一个
-        try sessionManager.addDrink(to: session1, type: .beer, volumeML: 500)
+        // 结束第一�?        try sessionManager.addDrink(to: session1, type: .beer, volumeML: 500)
         _ = try sessionManager.endSession(session1)
 
-        // 第二个仍应活跃
-        let stillActive = sessionManager.fetchActiveSession(for: user)
+        // 第二个仍应活�?        let stillActive = sessionManager.fetchActiveSession(for: user)
         XCTAssertNotNil(stillActive)
         XCTAssertEqual(stillActive?.id, session2.id)
     }
