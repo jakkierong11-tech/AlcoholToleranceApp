@@ -32,12 +32,23 @@ jobs:
       - name: 编译
         run: |
           cd AlcoholToleranceApp
+          set -o pipefail
           xcodebuild build \
             -project AlcoholToleranceApp.xcodeproj \
             -scheme AlcoholToleranceApp \
             -sdk iphonesimulator \
             -configuration Debug \
-            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            2>&1 | tee build.log | tail -5
+        shell: bash
+
+      - name: 🔍 错误线
+        if: failure()
+        run: |
+          echo "=== ERRORS ==="
+          grep -E "error:" AlcoholToleranceApp/build.log | head -20
+          echo "=== TAIL ==="
+          tail -30 AlcoholToleranceApp/build.log
         shell: bash
 
       - name: 测试
