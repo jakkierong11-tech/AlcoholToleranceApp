@@ -30,7 +30,7 @@ jobs:
       - name: 编译
         run: |
           cd AlcoholToleranceApp
-          xcodebuild build \
+          xcodebuild build-for-testing \
             -project AlcoholToleranceApp.xcodeproj \
             -scheme AlcoholToleranceApp \
             -sdk iphonesimulator \
