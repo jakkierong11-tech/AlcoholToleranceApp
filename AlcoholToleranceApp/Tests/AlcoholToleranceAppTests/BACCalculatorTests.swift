@@ -2,7 +2,7 @@ import XCTest
 @testable import AlcoholToleranceApp
 
 /// BACCalculator 单元测试
-/// 对齐当前实现签名：所有方法为 static，直接 BACCalculator.method() 调用
+/// 对齐当前实现签名：所有方法为 static，直�?BACCalculator.method() 调用
 
 final class BACCalculatorTests: XCTestCase {
 
@@ -33,7 +33,7 @@ final class BACCalculatorTests: XCTestCase {
             weightKg: weightKg, isMale: true,
             volumeML: 500, alcoholPercent: 5
         )
-        XCTAssertGreaterThan(femaleBAC, maleBAC, "相同体重下女性 BAC 应高于男性")
+        XCTAssertGreaterThan(femaleBAC, maleBAC, "相同体重下女�?BAC 应高于男�?)
     }
 
     func test_calculateBAC_multipleDrinks_accumulatesCorrectly() {
@@ -74,7 +74,7 @@ final class BACCalculatorTests: XCTestCase {
         XCTAssertEqual(soberTime, 0.0, accuracy: 0.001)
     }
 
-    // MARK: - BAC 代谢后时间
+    // MARK: - BAC 代谢后时�?
 
     func test_calculateBACAfterTime_linearDecay_isCorrect() {
         let bac = BACCalculator.calculateBACAfterTime(
@@ -88,7 +88,7 @@ final class BACCalculatorTests: XCTestCase {
             initialBAC: 0.02, hoursPassed: 5.0, metabolismRate: 0.015
         )
         XCTAssertEqual(bac, 0.0, accuracy: 0.001)
-        XCTAssertGreaterThanOrEqual(bac, 0.0, "BAC 不应为负数")
+        XCTAssertGreaterThanOrEqual(bac, 0.0, "BAC 不应为负�?)
     }
 
     func test_calculateBACAfterTime_zeroInitialBAC_returnsZero() {
@@ -149,7 +149,7 @@ final class BACCalculatorTests: XCTestCase {
         let bac = BACCalculator.calculateBAC(
             weightKg: 60, isMale: false, volumeML: 5000, alcoholPercent: 40
         )
-        XCTAssertGreaterThan(bac, 1.0, "极大饮酒量下 BAC 应 > 1%")
+        XCTAssertGreaterThan(bac, 1.0, "极大饮酒量下 BAC �?> 1%")
         XCTAssertFalse(bac.isNaN)
         XCTAssertFalse(bac.isInfinite)
     }
@@ -199,7 +199,7 @@ final class BACCalculatorTests: XCTestCase {
             volumeML: 300, alcoholPercent: 12,
             isCarbonated: false
         )
-        XCTAssertGreaterThan(carbonatedBAC, nonCarbonatedBAC, "碳酸饮料应导致更高的 BAC 峰值")
+        XCTAssertGreaterThan(carbonatedBAC, nonCarbonatedBAC, "碳酸饮料应导致更高的 BAC 峰�?)
     }
 
     // MARK: - 空腹影响
@@ -215,10 +215,10 @@ final class BACCalculatorTests: XCTestCase {
             volumeML: 300, alcoholPercent: 12,
             isEmptyStomach: false
         )
-        XCTAssertGreaterThan(emptyStomachBAC, fullStomachBAC, "空腹状态下 BAC 应更高")
+        XCTAssertGreaterThan(emptyStomachBAC, fullStomachBAC, "空腹状态下 BAC 应更�?)
     }
 
-    // MARK: - 法律阈值
+    // MARK: - 法律阈�?
 
     func test_isOverLegalLimit_chinaThreshold_exceeds_returnsTrue() {
         XCTAssertTrue(BACCalculator.isOverLegalLimit(bac: 0.025, limit: 0.02))
@@ -238,14 +238,14 @@ final class BACCalculatorTests: XCTestCase {
         let score = BACCalculator.calculateSessionScore(
             bacPercent: 0.01, totalAlcoholGrams: 10, weightKg: 70
         )
-        XCTAssertLessThan(score, 30, "低 BAC 应返回低耐受分")
+        XCTAssertLessThan(score, 30, "�?BAC 应返回低耐受�?)
     }
 
     func test_calculateSessionScore_highBAC_returnsHighScore() {
         let score = BACCalculator.calculateSessionScore(
             bacPercent: 0.3, totalAlcoholGrams: 150, weightKg: 70
         )
-        XCTAssertGreaterThan(score, 40, "高 BAC 应返回高耐受分")
+        XCTAssertGreaterThan(score, 40, "�?BAC 应返回高耐受�?)
     }
 
     func test_calculateSessionScore_zeroBAC_returnsZero() {
@@ -287,8 +287,8 @@ final class BACCalculatorTests: XCTestCase {
             (0.034, "微醺"),
             (0.035, "兴奋"),
             (0.059, "兴奋"),
-            (0.060, "激动"),
-            (0.099, "激动"),
+            (0.060, "激�?),
+            (0.099, "激�?),
             (0.100, "迷糊"),
             (0.199, "迷糊"),
             (0.200, "昏睡"),
@@ -300,7 +300,7 @@ final class BACCalculatorTests: XCTestCase {
         for tc in testCases {
             let info = BACCalculator.getBACLevel(bacPercent: tc.bac)
             XCTAssertEqual(info.label, tc.expectedRaw,
-                "BAC \(tc.bac) 应映射到 \(tc.expectedRaw)，实际: \(info.label)")
+                "BAC \(tc.bac) 应映射到 \(tc.expectedRaw)，实�? \(info.label)")
         }
     }
 
@@ -327,24 +327,24 @@ final class BACCalculatorTests: XCTestCase {
     }
 
     func test_drivingAdvice_sober_returnsSafe() {
-        // BAC 0.001 < halfLimit(0.01) → ✅ 可以驾驶
-        XCTAssertTrue(BACCalculator.drivingAdvice(bac: 0.001).contains("可以驾驶"))
+        // BAC 0.001 < halfLimit(0.01) �?�?可以驾驶
+        XCTAssertTrue(LegalRegion.cn.drivingAdvice(for: 0.001).contains("可以驾驶"))
     }
 
     func test_drivingAdvice_drunk_returnsForbidden() {
-        XCTAssertTrue(BACCalculator.drivingAdvice(bac: 0.09).contains("严禁驾驶"))
+        XCTAssertTrue(LegalRegion.cn.drivingAdvice(for: 0.09).contains("严禁驾驶"))
     }
 
     // MARK: - 负时间倒退防御
 
     func test_calculateCumulativeBAC_negativeHoursAgo_isClamped() {
         let drinks: [(volumeML: Double, alcoholPercent: Double, hoursAgo: Double, isCarbonated: Bool, isEmptyStomach: Bool)] = [
-            (300, 5.0, -1.0, false, false), // 负数时间，应被 clamp 到 0
+            (300, 5.0, -1.0, false, false), // 负数时间，应�?clamp �?0
         ]
         let bac = BACCalculator.calculateCumulativeBAC(
             weightKg: 70, isMale: true, drinks: drinks
         )
-        // 负数 clamp 到 0，不扣除代谢 → 就是峰值 BAC
+        // 负数 clamp �?0，不扣除代谢 �?就是峰�?BAC
         let expected = BACCalculator.calculateBAC(
             weightKg: 70, isMale: true, volumeML: 300, alcoholPercent: 5
         )
