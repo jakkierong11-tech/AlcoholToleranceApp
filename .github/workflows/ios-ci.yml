@@ -52,16 +52,22 @@ jobs:
           xcrun simctl shutdown 'iPad (10th generation)' || true
 
       - name: 打包并上传 Appetize.io
+        id: appetize
+        continue-on-error: true
         env:
           APPETIZE_TOKEN: ${{ secrets.APPETIZE_API_TOKEN }}
         run: |
           [ -z "$APPETIZE_TOKEN" ] && echo "SKIP: no token" && exit 0
           APP=$(find ~/Library/Developer/Xcode/DerivedData -name 'AlcoholToleranceApp.app' -type d 2>/dev/null | head -1)
-          [ -z "$APP" ] && echo "ERROR: .app not found" && exit 1
+          [ -z "$APP" ] && echo "WARN: .app not found" && exit 0
           cd "$(dirname "$APP")" && zip -r /tmp/app.zip "$(basename "$APP")"
-          RESP=$(curl -s -X POST https://api.appetize.io/v1/apps -H "Authorization: $APPETIZE_TOKEN" -F "file=@/tmp/app.zip" -F "platform=ios" -F "timeout=300")
-          echo "$RESP"
-          KEY=$(echo "$RESP" | python3 -c "import json,sys; print(json.load(sys.stdin).get('publicKey',''))" 2>/dev/null)
+          RESP=$(curl -s -w '\n%{http_code}' -X POST https://api.appetize.io/v1/apps -H "Authorization: $APPETIZE_TOKEN" -F "file=@/tmp/app.zip" -F "platform=ios" -F "timeout=300")
+          HTTP_CODE=$(echo "$RESP" | tail -1)
+          echo "HTTP $HTTP_CODE"
+          if [ "$HTTP_CODE" != "200" ]; then echo "WARN: Appetize upload failed (HTTP $HTTP_CODE)"; exit 0; fi
+          BODY=$(echo "$RESP" | head -n -1)
+          echo "$BODY"
+          KEY=$(echo "$BODY" | python3 -c "import json,sys; print(json.load(sys.stdin).get('publicKey',''))" 2>/dev/null)
           [ -n "$KEY" ] && echo "✅ https://appetize.io/app/$KEY" && echo "appetize_url=https://appetize.io/app/$KEY" >> $GITHUB_OUTPUT
 
       - name: 通知 Discord
