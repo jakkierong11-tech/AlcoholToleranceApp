@@ -36,7 +36,7 @@ jobs:
           xcodebuild build \
             -project AlcoholToleranceApp.xcodeproj \
             -scheme AlcoholToleranceApp \
-            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.5' \
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
             2>&1 | tee build.log | tail -5
