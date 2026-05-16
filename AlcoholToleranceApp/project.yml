@@ -20,6 +20,9 @@ targets:
       - path: AlcoholToleranceApp
         excludes:
           - "**/.DS_Store"
+      - path: .
+        includes:
+          - "AlcoholToleranceApp.swift"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.alcoholtolerance.app
