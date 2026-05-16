@@ -33,9 +33,8 @@ jobs:
           xcodebuild test \
             -project AlcoholToleranceApp.xcodeproj \
             -scheme AlcoholToleranceApp \
-            -destination 'platform=iOS Simulator,name=iPad (10th generation),OS=18.5' \
+            -destination 'platform=iOS Simulator,name=iPad (10th generation)' \
             -configuration Debug \
-            OTHER_LDFLAGS='$(inherited) -Xlinker -undefined -Xlinker dynamic_lookup' \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
 
       - name: 打包并上传 Appetize.io
