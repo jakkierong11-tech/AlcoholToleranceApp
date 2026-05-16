@@ -30,8 +30,6 @@ jobs:
           xcrun simctl list devices available | head -20
 
       - name: 编译
-        id: build
-        continue-on-error: true
         run: |
           cd AlcoholToleranceApp
           xcodebuild build \
@@ -40,23 +38,16 @@ jobs:
             -sdk iphonesimulator \
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
-            > xcodebuild.log 2>&1 || true
+            > xcodebuild.log 2>&1
         shell: bash
 
       - name: 提取编译错误
-        if: always()
+        if: failure()
         run: |
           echo "=== BUILD ERRORS ==="
           grep -i "error:" AlcoholToleranceApp/xcodebuild.log || echo "no error: lines found"
-          echo "=== BUILD FAILURES SUMMARY ==="
-          grep -A5 -i "failures" AlcoholToleranceApp/xcodebuild.log || echo "no failures line"
-          echo "=== LAST 30 LINES ==="
-          tail -30 AlcoholToleranceApp/xcodebuild.log
-        shell: bash
-
-      - name: 中止（编译失败）
-        if: steps.build.outcome == 'failure'
-        run: exit 1
+          echo "=== LAST 20 LINES ==="
+          tail -20 AlcoholToleranceApp/xcodebuild.log
         shell: bash
 
       - name: 测试
@@ -65,7 +56,7 @@ jobs:
           xcodebuild test \
             -project AlcoholToleranceApp.xcodeproj \
             -scheme AlcoholToleranceApp \
-            -destination 'platform=iOS Simulator,name=Any iOS Simulator Device' \
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.5' \
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
 

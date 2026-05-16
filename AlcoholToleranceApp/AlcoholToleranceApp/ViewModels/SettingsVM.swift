@@ -123,7 +123,7 @@ final class SettingsVM: ObservableObject {
         defaults.removeObject(forKey: key)
     }
 
-    private enum Keys {
+    enum Keys {
         static let legalRegion = "legalRegion"
         static let metabolismRate = "metabolismRate"
         static let carbonationBoost = "enableCarbonationBoost"
@@ -218,7 +218,7 @@ final class SettingsVM: ObservableObject {
     }
 }
 
-private extension SettingsVM.Keys {
+extension SettingsVM.Keys {
     /// 反射生成所有 key 值，新增 key 时自动包含
     static var all: [String] {
         Mirror(reflecting: SettingsVM.Keys.self)
