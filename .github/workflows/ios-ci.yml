@@ -5,8 +5,9 @@ on:
     branches: [master, main]
     paths:
       - 'AlcoholToleranceApp/**'
+      - '.github/workflows/ios-ci.yml'
   pull_request:
-    branches: [main]
+    branches: [master, main]
     paths:
       - 'AlcoholToleranceApp/**'
   workflow_dispatch:
@@ -15,10 +16,8 @@ jobs:
   build-and-test:
     name: 编译 + 测试
     runs-on: macos-latest
-
     steps:
-      - name: 拉取代码
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: 选 Xcode
         run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
@@ -26,18 +25,9 @@ jobs:
       - name: 安装 XcodeGen
         run: brew install xcodegen
 
-      - name: 生成 .xcodeproj
+      - name: 生成 xcodeproj
         working-directory: AlcoholToleranceApp
         run: xcodegen generate
-
-      - name: 创建模拟器
-        id: sim
-        run: |
-          RUNTIME_ID=$(xcrun simctl list runtimes available -j | python3 -c "import json,sys; d=json.load(sys.stdin); r=[r['identifier'] for r in d.get('runtimes',[]) if 'iOS' in r.get('name','')]; print(r[-1] if r else '')")
-          DEVICE_ID=$(xcrun simctl list devicetypes -j | python3 -c "import json,sys; d=json.load(sys.stdin); r=[t['identifier'] for t in d.get('devicetypes',[]) if 'iPhone' in t.get('name','') and 'Pro' not in t.get('name','')]; print(r[-1] if r else 'com.apple.CoreSimulator.SimDeviceType.iPhone-16')")
-          SIM_UDID=$(xcrun simctl create "CI_Device_$RANDOM" "$DEVICE_ID" "$RUNTIME_ID")
-          echo "Using simulator: $SIM_UDID"
-          echo "SIM_UDID=$SIM_UDID" >> $GITHUB_OUTPUT
 
       - name: 编译 App
         id: build
@@ -46,114 +36,86 @@ jobs:
           xcodebuild build \
             -project AlcoholToleranceApp.xcodeproj \
             -scheme AlcoholToleranceApp \
-            -destination "platform=iOS Simulator,id=${{ steps.sim.outputs.SIM_UDID }}" \
+            -destination "platform=iOS Simulator,name=Any iOS Simulator Device" \
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO
-        continue-on-error: true
 
-      - name: 运行单元测试
+      - name: 运行测试
         id: test
-        if: steps.build.outcome == 'success'
         working-directory: AlcoholToleranceApp
         run: |
           xcodebuild test \
             -project AlcoholToleranceApp.xcodeproj \
             -scheme AlcoholToleranceApp \
-            -destination "platform=iOS Simulator,id=${{ steps.sim.outputs.SIM_UDID }}" \
+            -destination "platform=iOS Simulator,name=Any iOS Simulator Device" \
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO
-        continue-on-error: true
 
-      - name: 打包 & 上传 Appetize.io
+      - name: 打包并上传 Appetize.io
         id: appetize
-        if: steps.test.outcome == 'success'
         env:
           APPETIZE_TOKEN: ${{ secrets.APPETIZE_API_TOKEN }}
         run: |
           if [ -z "$APPETIZE_TOKEN" ]; then
-            echo "⚠️ APPTIZE_API_TOKEN 未配置，跳过上传"
-            echo "SKIP=true" >> $GITHUB_OUTPUT
+            echo "⚠️ 未配置 APPETIZE_API_TOKEN，跳过上传"
             exit 0
           fi
-          APP_PATH=$(find ~/Library/Developer/Xcode/DerivedData/AlcoholToleranceApp-*/Build/Products/Debug-iphonesimulator -name 'AlcoholToleranceApp.app' -type d | head -1)
+          APP_PATH=$(find ~/Library/Developer/Xcode/DerivedData/AlcoholToleranceApp-*/Build/Products/Debug-iphonesimulator -name 'AlcoholToleranceApp.app' -type d 2>/dev/null | head -1)
           if [ -z "$APP_PATH" ]; then
-            echo "❌ 找不到 .app，尝试全路径搜索..."
             APP_PATH=$(find /tmp -name 'AlcoholToleranceApp.app' -type d 2>/dev/null | head -1)
           fi
-          echo "📦 App 路径: $APP_PATH"
+          if [ -z "$APP_PATH" ]; then
+            echo "❌ 找不到 .app 文件"
+            exit 1
+          fi
+          echo "📦 $APP_PATH"
           cd "$(dirname "$APP_PATH")"
-          zip -r /tmp/AppetizeUpload.zip "$(basename "$APP_PATH")"
-          echo "📤 上传到 Appetize.io..."
-          RESPONSE=$(curl -s -X POST https://api.appetize.io/v1/apps \
-            -H "Authorization: token $APPETIZE_TOKEN" \
-            -F "file=@/tmp/AppetizeUpload.zip" \
+          zip -r /tmp/app.zip "$(basename "$APP_PATH")"
+          RESP=$(curl -s -X POST https://api.appetize.io/v1/apps \
+            -H "Authorization: $APPETIZE_TOKEN" \
+            -F "file=@/tmp/app.zip" \
             -F "platform=ios" \
             -F "timeout=300")
-          echo "$RESPONSE" > /tmp/appetize.json
-          PUBLIC_KEY=$(echo "$RESPONSE" | python3 -c "import json,sys; print(json.load(sys.stdin).get('publicKey',''))" 2>/dev/null)
-          if [ -n "$PUBLIC_KEY" ]; then
-            APP_URL="https://appetize.io/app/$PUBLIC_KEY"
-            echo "✅ Appetize.io: $APP_URL"
-            echo "URL=$APP_URL" >> $GITHUB_OUTPUT
-            echo "SKIP=false" >> $GITHUB_OUTPUT
-          else
-            echo "⚠️ 上传可能失败，检查 token"
-            echo "SKIP=true" >> $GITHUB_OUTPUT
+          echo "$RESP"
+          KEY=$(echo "$RESP" | python3 -c "import json,sys; print(json.load(sys.stdin).get('publicKey',''))" 2>/dev/null)
+          if [ -n "$KEY" ]; then
+            URL="https://appetize.io/app/$KEY"
+            echo "appetize_url=$URL" >> $GITHUB_OUTPUT
+            echo "✅ $URL"
           fi
 
       - name: 通知 Discord
         if: always()
         env:
           WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          APPETIZE_URL: ${{ steps.appetize.outputs.appetize_url }}
         run: |
-          BUILD_OUTCOME="${{ steps.build.outcome }}"
-          TEST_OUTCOME="${{ steps.test.outcome }}"
-          APPETIZE_URL="${{ steps.appetize.outputs.URL }}"
-          APPETIZE_SKIP="${{ steps.appetize.outputs.SKIP }}"
+          if [ -z "$WEBHOOK" ]; then echo "⚠️ Discord webhook 未配置"; exit 0; fi
+          B=${{ steps.build.outcome }}
+          T=${{ steps.test.outcome }}
           RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-
-          if [ "$BUILD_OUTCOME" = "success" ] && [ "$TEST_OUTCOME" = "success" ]; then
-            TITLE="✅ CI 通过 — AlcoholToleranceApp"
-            COLOR=65280
-            BUILD_LINE="✅ 编译通过"
-            TEST_LINE="✅ 测试通过"
-            if [ "$APPETIZE_SKIP" != "true" ] && [ -n "$APPETIZE_URL" ]; then
-              APP_LINE="[🎮 打开模拟器]($APPETIZE_URL)"
-            else
-              APP_LINE="⏭️ 未上传"
-            fi
+          if [ "$B" = "success" ] && [ "$T" = "success" ]; then
+            TITLE="✅ CI 通过"
+            COLOR=65280; BL="✅ 编译"; TL="✅ 测试"
+            [ -n "$APPETIZE_URL" ] && APP="[🎮 模拟器]($APPETIZE_URL)" || APP="⏭️"
           else
-            TITLE="❌ CI 失败 — AlcoholToleranceApp"
+            TITLE="❌ CI 失败"
             COLOR=16711680
-            BUILD_LINE="$([ "$BUILD_OUTCOME" = "success" ] && echo '✅ 编译通过' || echo '❌ 编译失败')"
-            TEST_LINE="$([ "$TEST_OUTCOME" = "success" ] && echo '✅ 测试通过' || [ "$TEST_OUTCOME" = "skipped" ] && echo '⏭️ 跳过' || echo '❌ 测试失败')"
-            APP_LINE="⏭️ 跳过"
+            BL="$([ "$B" = "success" ] && echo '✅ 编译' || echo '❌ 编译')"
+            TL="$([ "$T" = "success" ] && echo '✅ 测试' || [ "$T" = "skipped" ] && echo '⏭️' || echo '❌ 测试')"
+            APP="⏭️"
           fi
-
-          PAYLOAD=$(cat <<EOF
-          {
-            "embeds": [{
-              "title": "$TITLE",
-              "color": $COLOR,
-              "fields": [
-                {"name": "📦 编译", "value": "$BUILD_LINE", "inline": true},
-                {"name": "🧪 测试", "value": "$TEST_LINE", "inline": true},
-                {"name": "📱 Appetize", "value": "$APP_LINE", "inline": true},
-                {"name": "🔗 详情", "value": "[查看 Actions]($RUN_URL)"}
-              ],
-              "footer": {"text": "${{ github.sha }}"}
+          curl -s -X POST "$WEBHOOK" -H "Content-Type: application/json" -d "{
+            \"embeds\":[{
+              \"title\":\"$TITLE\",
+              \"color\":$COLOR,
+              \"fields\":[
+                {\"name\":\"📦 编译\",\"value\":\"$BL\",\"inline\":true},
+                {\"name\":\"🧪 测试\",\"value\":\"$TL\",\"inline\":true},
+                {\"name\":\"📱 Appetize\",\"value\":\"$APP\",\"inline\":true},
+                {\"name\":\"🔗 详情\",\"value\":\"[查看 Actions]($RUN_URL)\"}
+              ]
             }]
-          }
-          EOF
-          )
-
-          echo "$PAYLOAD" > /tmp/discord.json
-          curl -s -X POST "$WEBHOOK" -H "Content-Type: application/json" -d @/tmp/discord.json
-          echo ""
-          echo "Discord 通知已发送"
-
-      - name: 编译日志（失败时）
-        if: steps.build.outcome == 'failure'
-        run: echo "编译失败，请查看上一步日志详情"
+          }" && echo "" || echo "Discord 通知发送可能失败"
